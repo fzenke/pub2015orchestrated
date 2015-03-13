@@ -14,7 +14,7 @@ CC = mpic++
 CFLAGS=-ansi -pipe -O3 -march=native -ffast-math -pedantic -I/usr/include -I$(AURYNINC)
 LDFLAGS=-lboost_program_options -lboost_mpi -lboost_serialization -L$(AURYNLIB) -lauryn
 
-SIMFILES=sim_rc_p10c sim_rc_p10d sim_rc_p11
+SIMFILES=sim_rc_p10c sim_rc_p10d sim_rc_p11 sim_rc_p12
 OBJFILES=P10Connection.o P11Connection.o P12Connection.o GlobalPFConnection.o
 
 simfiles: $(SIMFILES)
