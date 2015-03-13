@@ -18,10 +18,6 @@
 * along with Auryn.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-#include <iomanip>
-#include <stdlib.h>
-#include <string>
 
 #include "auryn.h"
 #include "GlobalPFConnection.h"
