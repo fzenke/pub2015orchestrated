@@ -1,5 +1,5 @@
 # Update the following lines to your system requirements
-AURYNPATH=$(HOME)/tmp/auryn
+AURYNPATH=$(HOME)/auryn
 
 # Path to Auryn include files
 AURYNINC=$(AURYNPATH)/src

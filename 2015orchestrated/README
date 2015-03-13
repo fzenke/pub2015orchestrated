@@ -22,3 +22,8 @@ Simulation files:
 	sim_rc_p10d: Feedforward simulation with P10Connection
 	sim_rc_p11:  Recurrent network simulation with P11Connection
 	sim_rc_p12:  Recurrent network simulation with P12Connection
+
+To compile these files modify the first lines in the makefile to point to your
+auryn dev files and library. The current Makefile assumes that you have a
+standard auryn directory under $(HOME)/auryn.
+Then run make in the current directory.
