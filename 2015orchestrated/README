@@ -1,3 +1,24 @@
+This directory contains Auryn classes and simulations to reproduce on-line
+learning with orchestrated plasticity rules.
+
+
+# Auryn classes
+
+P10Connection 
+       Implements the excitatory connection object for orchestrated
+       plasticity without homeostatic sliding threshold.
+
+P11Connection 
+       Implements the excitatory connection object for orchestrated
+       plasticity with homeostatic sliding threshold.
+
+P12Connection 
+       Implements variation of P11Connection with two limits of the
+       sliding threshold.
+
+
+# Running an example
+
 To run the orchestrated plasticity simulation as described in Figure 3 of you
 need to install and compile Auryn v0.5. In the following we will assume that you
 have git installed and up and running on your system. Moreover, you have all

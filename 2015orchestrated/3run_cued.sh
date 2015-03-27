@@ -6,8 +6,8 @@ make -C $DIR -j8 $BIN && mpirun -n 4 $DIR/$BIN \
 	--dir $OUTDIR \
 	--load $OUTDIR/rf2 \
 	--prefix rf3 --size 4096 --save \
-	--monf ./rf1.pat \
-	--stim ~/stim/shapes_cues.pat \
+	--monf ./data/rf1.pat \
+	--stim ./shapes_cues.pat \
 	--wie 0.15 --wee 0.1 --wext 0.1 \
 	--simtime 172800 --tauf 0.6 \
 	--extsparse 0.05 \

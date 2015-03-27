@@ -1,7 +1,7 @@
 #!/bin/sh
 
-OUTDIR="/lcncluster/zenke/reset/"
-RECFILE="/lcncluster/zenke/reset/rf_discsR8.mtx"
+OUTDIR="/tmp/"
+RECFILE="./data/rf_discsR8.mtx"
 
 DIR="."
 BIN="sim_rc_p10c"
