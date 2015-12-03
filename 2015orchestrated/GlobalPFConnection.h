@@ -29,8 +29,7 @@
 
 #define TRACE EulerTrace
 
-using namespace std;
-
+namespace auryn {
 
 class GlobalPFConnection : public DuplexConnection
 {
@@ -119,5 +118,7 @@ public:
 	virtual bool write_to_file(string filename);
 
 };
+
+}
 
 #endif /*GLOBALPFCONNECTION_H_*/

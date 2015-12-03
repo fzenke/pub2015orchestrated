@@ -20,6 +20,8 @@
 
 #include "P10Connection.h"
 
+using namespace auryn;
+
 void P10Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 {
 	set_name("P10Connection");
@@ -338,17 +340,17 @@ void P10Connection::set_beta(AurynFloat b)
 bool P10Connection::write_to_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::write_to_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ofstream outfile;
-	outfile.open(oss.str().c_str(),ios::out);
+	std::ofstream outfile;
+	outfile.open(oss.str().c_str(),std::ios::out);
 	if (!outfile) {
-	  cerr << "Can't open output file " << filename << endl;
+		std::cerr << "Can't open output file " << filename << std::endl;
 	  throw AurynOpenFileException();
 	}
 
@@ -366,16 +368,16 @@ bool P10Connection::write_to_file(string filename)
 bool P10Connection::load_from_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::load_from_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ifstream infile (oss.str().c_str());
+	std::ifstream infile (oss.str().c_str());
 	if (!infile) {
-		stringstream oes;
+		std::stringstream oes;
 		oes << "Can't open input file " << filename;
 		logger->msg(oes.str(),ERROR);
 		throw AurynOpenFileException();

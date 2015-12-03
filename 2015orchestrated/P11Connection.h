@@ -29,8 +29,7 @@
 #define P11DECAYTERM_H 4.0
 #define P11CONNECTION_EULERUPGRADE_STEP 0.99
 
-using namespace std;
-
+namespace auryn {
 
 class P11Connection : public DuplexConnection
 {
@@ -148,5 +147,7 @@ public:
 	virtual bool write_to_file(string filename);
 
 };
+
+}
 
 #endif /*P11CONNECTION_H_*/

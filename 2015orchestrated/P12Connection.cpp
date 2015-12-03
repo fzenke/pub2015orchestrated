@@ -20,6 +20,8 @@
 
 #include "P12Connection.h"
 
+using namespace auryn;
+
 void P12Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 {
 	set_name("P12Connection");
@@ -181,8 +183,8 @@ inline AurynWeight P12Connection::dw_pre(const NeuronID post, const AurynWeight 
 	AurynDouble mul = rate/10;
 	// cout << mul << endl;
 	// mul = max(0.35,mul);  
-	mul = max(0.5,mul);  
-	mul = min(1.2,mul);  
+	mul = std::max(0.5,mul);  
+	mul = std::min(1.2,mul);  
 	// mul = 1.0; // disable
 	AurynDouble dw = A2_minus*( (tr_post->get(post))*mul ) - delta;
 
@@ -362,17 +364,17 @@ void P12Connection::set_beta(AurynFloat b)
 bool P12Connection::write_to_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::write_to_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ofstream outfile;
-	outfile.open(oss.str().c_str(),ios::out);
+	std::ofstream outfile;
+	outfile.open(oss.str().c_str(),std::ios::out);
 	if (!outfile) {
-	  cerr << "Can't open output file " << filename << endl;
+		std::cerr << "Can't open output file " << filename << std::endl;
 	  throw AurynOpenFileException();
 	}
 
@@ -390,16 +392,16 @@ bool P12Connection::write_to_file(string filename)
 bool P12Connection::load_from_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::load_from_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ifstream infile (oss.str().c_str());
+	std::ifstream infile (oss.str().c_str());
 	if (!infile) {
-		stringstream oes;
+		std::stringstream oes;
 		oes << "Can't open input file " << filename;
 		logger->msg(oes.str(),ERROR);
 		throw AurynOpenFileException();

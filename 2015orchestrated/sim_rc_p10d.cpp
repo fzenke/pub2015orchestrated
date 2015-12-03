@@ -24,7 +24,7 @@
 
 #define N_EXEC_WEIGHTS 600
 
-using namespace std;
+using namespace auryn;
 
 namespace po = boost::program_options;
 namespace mpi = boost::mpi;
@@ -87,95 +87,95 @@ int main(int ac, char* av[])
         po::notify(vm);    
 
         if (vm.count("help")) {
-            cout << desc << "\n";
+			std::cout << desc << "\n";
             return 1;
         }
 
 
         if (vm.count("kappa")) {
-            cout << "kappa set to " 
+			std::cout << "kappa set to " 
                  << vm["kappa"].as<double>() << ".\n";
 			kappa = vm["kappa"].as<double>();
         } 
 
         if (vm.count("poststim")) {
-            cout << "poststim set to " 
+			std::cout << "poststim set to " 
                  << vm["poststim"].as<double>() << ".\n";
 			poststim = vm["poststim"].as<double>();
         } 
 
         if (vm.count("simtime")) {
-            cout << "simtime set to " 
+			std::cout << "simtime set to " 
                  << vm["simtime"].as<double>() << ".\n";
 			simtime = vm["simtime"].as<double>();
         } 
 
         if (vm.count("we")) {
-            cout << "we set to " 
+			std::cout << "we set to " 
                  << vm["we"].as<double>() << ".\n";
 			we = vm["we"].as<double>();
         } 
 
         if (vm.count("eta")) {
-            cout << "eta set to " 
+			std::cout << "eta set to " 
                  << vm["eta"].as<double>() << ".\n";
 			eta = vm["eta"].as<double>();
         } 
 
         if (vm.count("beta")) {
-            cout << "beta set to " 
+			std::cout << "beta set to " 
                  << vm["beta"].as<double>() << ".\n";
 			beta = vm["beta"].as<double>();
         } 
 
         if (vm.count("weightc")) {
-            cout << "weightc set to " 
+			std::cout << "weightc set to " 
                  << vm["weightc"].as<double>() << ".\n";
 			weightc = vm["weightc"].as<double>();
         } 
 
         if (vm.count("size")) {
-            cout << "size set to " 
+			std::cout << "size set to " 
                  << vm["size"].as<int>() << ".\n";
 			size = vm["size"].as<int>();
         } 
 
         if (vm.count("rates")) {
-            cout << "rates set to " 
+			std::cout << "rates set to " 
                  << vm["rates"].as<bool>() << ".\n";
 			record_rates = vm["rates"].as<bool>();
         } 
 
         if (vm.count("wmat")) {
-            cout << "wmat set to " 
+			std::cout << "wmat set to " 
                  << vm["wmat"].as<string>() << ".\n";
 			wmat = vm["wmat"].as<string>();
         } 
 
         if (vm.count("prefix")) {
-            cout << "prefix set to " 
+			std::cout << "prefix set to " 
                  << vm["prefix"].as<string>() << ".\n";
 			file_prefix = vm["prefix"].as<string>();
         } 
 
         if (vm.count("dir")) {
-            cout << "dir set to " 
+			std::cout << "dir set to " 
                  << vm["dir"].as<string>() << ".\n";
 			dir = vm["dir"].as<string>();
         } 
 
         if (vm.count("seed")) {
-            cout << "seed set to " 
+			std::cout << "seed set to " 
                  << vm["seed"].as<int>() << ".\n";
 			seed = vm["seed"].as<int>();
         } 
     }
-    catch(exception& e) {
-        cerr << "error: " << e.what() << "\n";
+    catch(std::exception& e) {
+		std::cerr << "error: " << e.what() << "\n";
         return 1;
     }
     catch(...) {
-        cerr << "Exception of unknown type!\n";
+		std::cerr << "Exception of unknown type!\n";
     }
 
 	// BEGIN Global stuff

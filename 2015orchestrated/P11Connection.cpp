@@ -20,6 +20,8 @@
 
 #include "P11Connection.h"
 
+using namespace auryn;
+
 void P11Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 {
 	set_name("P11Connection");
@@ -182,7 +184,7 @@ inline AurynWeight P11Connection::dw_pre(const NeuronID post, const AurynWeight 
 	mul *= 2; // stability of lower FP very dependent on this param
 
 	// cout << mul << endl;
-	mul = min(1.0,mul);  
+	mul = std::min(1.0,mul);  
 	// mul = 1.0; // disable
 	AurynDouble dw = A2_minus*( (tr_post->get(post))*mul ) - delta;
 
@@ -363,17 +365,17 @@ void P11Connection::set_beta(AurynFloat b)
 bool P11Connection::write_to_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::write_to_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ofstream outfile;
-	outfile.open(oss.str().c_str(),ios::out);
+	std::ofstream outfile;
+	outfile.open(oss.str().c_str(),std::ios::out);
 	if (!outfile) {
-	  cerr << "Can't open output file " << filename << endl;
+		std::cerr << "Can't open output file " << filename << std::endl;
 	  throw AurynOpenFileException();
 	}
 
@@ -391,16 +393,16 @@ bool P11Connection::write_to_file(string filename)
 bool P11Connection::load_from_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::load_from_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ifstream infile (oss.str().c_str());
+	std::ifstream infile (oss.str().c_str());
 	if (!infile) {
-		stringstream oes;
+		std::stringstream oes;
 		oes << "Can't open input file " << filename;
 		logger->msg(oes.str(),ERROR);
 		throw AurynOpenFileException();

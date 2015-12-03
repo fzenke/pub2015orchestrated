@@ -29,8 +29,7 @@
 #define P10DECAYTERM_H 4.0
 #define P10CONNECTION_EULERUPGRADE_STEP 0.99
 
-using namespace std;
-
+namespace auryn {
 
 class P10Connection : public DuplexConnection
 {
@@ -147,5 +146,7 @@ public:
 	void randomize_consolidation_variables(AurynFloat mean, AurynFloat std);
 
 };
+
+}
 
 #endif /*P10CONNECTION_H_*/

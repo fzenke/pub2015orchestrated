@@ -25,7 +25,7 @@
 
 #define N_EXEC_WEIGHTS 800
 
-using namespace std;
+using namespace auryn;
 
 namespace po = boost::program_options;
 namespace mpi = boost::mpi;
@@ -161,7 +161,7 @@ int main(int ac, char* av[])
         po::notify(vm);    
 
         if (vm.count("help")) {
-            cout << desc << "\n";
+			std::cout << desc << "\n";
             return 1;
         }
 
@@ -170,7 +170,7 @@ int main(int ac, char* av[])
         } 
 
         if (vm.count("prefix")) {
-            cout << "simulation prefix " 
+			std::cout << "simulation prefix " 
                  << vm["prefix"].as<string>() << ".\n";
 			file_prefix = vm["prefix"].as<string>();
         } 
@@ -344,12 +344,12 @@ int main(int ac, char* av[])
 			seed = vm["seed"].as<int>();
         } 
     }
-    catch(exception& e) {
-        cerr << "error: " << e.what() << "\n";
+    catch(std::exception& e) {
+		std::cerr << "error: " << e.what() << "\n";
         return 1;
     }
     catch(...) {
-        cerr << "Exception of unknown type!\n";
+		std::cerr << "Exception of unknown type!\n";
     }
 
 
@@ -622,7 +622,7 @@ int main(int ac, char* av[])
 
 		// gives the first 3 patterns half of the probability
 		if ( preferred > 0 ) { 
-			vector<double> dist = stimgroup->get_distribution();
+			std::vector<double> dist = stimgroup->get_distribution();
 			int r = preferred;
 			double prob = 0.8;
 			for ( int i = 0 ; i < dist.size() ; ++i ) {
@@ -702,11 +702,11 @@ int main(int ac, char* av[])
 
 	sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), world.rank() );
 	VoltageMonitor * stmon_mem = new VoltageMonitor( neurons_e, 3, string(strbuf) ); 
-	stmon_mem->tStop = 10/dt; // stops recording after 10s
+	stmon_mem->record_for(10); // stops recording after 10s
 
 	sprintf(strbuf, "%s/%s.%d.imem", dir.c_str(), file_prefix.c_str(), world.rank() );
 	VoltageMonitor * stmon_imem = new VoltageMonitor( neurons_i2, 3, string(strbuf) ); 
-	stmon_imem->tStop = 10/dt; // stops recording after 10s
+	stmon_imem->record_for(10); // stops recording after 10s
 
 	// sprintf(strbuf, "%s/%s.%d.si1e", dir.c_str(), file_prefix.c_str(), world.rank() );
 	// WeightMonitor * wmon_i1e = new WeightMonitor( con_i1e, string(strbuf) ); 

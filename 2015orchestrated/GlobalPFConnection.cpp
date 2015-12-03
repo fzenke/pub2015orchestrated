@@ -20,6 +20,8 @@
 
 #include "GlobalPFConnection.h"
 
+using namespace auryn;
+
 void GlobalPFConnection::init(AurynFloat tau_hom, AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 {
 	if ( dst->get_post_size() == 0 ) return;
@@ -179,13 +181,13 @@ void GlobalPFConnection::evolve()
 bool GlobalPFConnection::write_to_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << ".cstate";
 
-	ofstream outfile;
-	outfile.open(oss.str().c_str(),ios::out);
+	std::ofstream outfile;
+	outfile.open(oss.str().c_str(),std::ios::out);
 	if (!outfile) {
-	  cerr << "Can't open output file " << filename << endl;
+		std::cerr << "Can't open output file " << filename << std::endl;
 	  throw AurynOpenFileException();
 	}
 
@@ -200,12 +202,12 @@ bool GlobalPFConnection::write_to_file(string filename)
 bool GlobalPFConnection::load_from_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << ".cstate";
-	ifstream infile (oss.str().c_str());
+	std::ifstream infile (oss.str().c_str());
 
 	if (!infile) {
-		stringstream oes;
+		std::stringstream oes;
 		oes << "Can't open input file " << filename;
 		logger->msg(oes.str(),ERROR);
 		throw AurynOpenFileException();

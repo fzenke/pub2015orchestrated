@@ -1,6 +1,6 @@
 #!/bin/sh
 
-OUTDIR="/tmp/"
+OUTDIR="$HOME/tmp/sim"
 RECFILE="./data/rf_discsR8.mtx"
 
 DIR="."
