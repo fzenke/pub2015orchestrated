@@ -618,7 +618,7 @@ int main(int ac, char* av[])
 		stimgroup->set_next_action_time(50); // let network settle for some time
 
 		sprintf(strbuf, "%s/%s.%d.s.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
-		SpikeMonitor * smon_s = new SpikeMonitor( stimgroup, string(strbuf), size );
+		BinarySpikeMonitor * smon_s = new BinarySpikeMonitor( stimgroup, string(strbuf), size );
 
 		// gives the first 3 patterns half of the probability
 		if ( preferred > 0 ) { 
@@ -750,11 +750,11 @@ int main(int ac, char* av[])
 	// new WeightStatsMonitor( con_se, string(strbuf) );
 
 	sprintf(strbuf, "%s/%s.%d.e.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
-	SpikeMonitor * smon_e = new SpikeMonitor( neurons_e, string(strbuf), size );
+	BinarySpikeMonitor * smon_e = new BinarySpikeMonitor( neurons_e, string(strbuf), size );
 
 
 	sprintf(strbuf, "%s/%s.%d.i2.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
-	SpikeMonitor * smon_i2 = new SpikeMonitor( neurons_i2, string(strbuf), size );
+	BinarySpikeMonitor * smon_i2 = new BinarySpikeMonitor( neurons_i2, string(strbuf), size );
 
 	sprintf(strbuf, "%s/%s.%d.e.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
 	PopulationRateMonitor * pmon_e = new PopulationRateMonitor( neurons_e, string(strbuf), 0.1 );
