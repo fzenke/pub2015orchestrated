@@ -60,6 +60,7 @@ void P10Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 	}
 
 
+	// FIXME this should be done with complex matrix states now
 	w_solid_matrix = new ForwardMatrix ( w ); 
 	set_weight_a(0.0);
 	set_weight_c(0.5);
