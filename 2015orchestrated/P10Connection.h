@@ -81,6 +81,36 @@ private:
 
 	void init_shortcuts();
 
+protected:
+
+	void virtual_serialize(boost::archive::binary_oarchive & ar, const unsigned int version )
+    {
+        DuplexConnection::virtual_serialize(ar,version);
+        // FIXME ideally the consolidation state should be stored
+        // as complex matrix state from version v0.5 on.
+        ar & *w_solid_matrix;
+
+        for (NeuronID i = 0 ; i < src->get_rank_size() ; ++i ) {
+            ar & state_x->data[i];
+            ar & state_u->data[i];
+        }
+    }
+
+    void virtual_serialize(boost::archive::binary_iarchive & ar, const unsigned int version )
+    {
+        DuplexConnection::virtual_serialize(ar,version);
+        // FIXME ideally the consolidation state should be stored
+        // as complex matrix state from version v0.5 on.
+        ar & *w_solid_matrix;
+
+        for (NeuronID i = 0 ; i < src->get_rank_size() ; ++i ) {
+            ar & state_x->data[i];
+            ar & state_u->data[i];
+        }
+    }
+
+
+
 
 public:
 	AurynFloat A3_plus;
