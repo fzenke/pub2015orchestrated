@@ -1,5 +1,9 @@
 This directory contains Auryn classes and simulations to reproduce on-line
-learning with orchestrated plasticity rules.
+learning with orchestrated plasticity rules. 
+
+This is the development branch to run with Auryn > v0.7.  
+Tested with Auryn develop branch commit
+7d834eb6d2be03a411031d4e12a876f44227109f
 
 
 # Auryn classes
