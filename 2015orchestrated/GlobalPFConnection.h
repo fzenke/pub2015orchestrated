@@ -68,6 +68,18 @@ protected:
 	void propagate_forward();
 	inline void propagate_backward();
 
+    void virtual_serialize(boost::archive::binary_oarchive & ar, const unsigned int version ) 
+    {
+        DuplexConnection::virtual_serialize(ar,version);
+		ar & post_factor ;
+    }
+
+    void virtual_serialize(boost::archive::binary_iarchive & ar, const unsigned int version ) 
+    {
+        DuplexConnection::virtual_serialize(ar,version);
+		ar & post_factor ;
+    }
+
 
 public:
 	AurynFloat zeta; //!< Presynaptically triggered decay variable similar to Vogels et al. 2011
