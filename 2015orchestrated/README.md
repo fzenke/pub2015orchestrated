@@ -27,7 +27,7 @@ This simulation reproduces the key results from the orchestrated plasticity
 simulation as described in Figure 3 you need to install and compile Auryn
 (commit 7d834eb6) Note, that due to ongoing development of the simulator and
 specifically changes to the random seeding of SparseConnections since v0.4.1
-the network you are simulating is not identical at the individual connectin
+the network you are simulating is not identical at the individual connection
 level to the simulation shown in the paper. To replicate the original
 simulation bit-by-bit please refer to the commit history of this repository and
 the simulator.
@@ -54,12 +54,12 @@ F., Agnes, E.J., Gerstner, W., 2015. Diverse synaptic plasticity mechanisms
 orchestrated to form and retrieve memories in spiking neural networks. Nature
 Communications.
 
-Finally, update the output path in `globalvars.sh' to point to a portion of
+Finally, update the output path in 'globalvars.sh' to point to a portion of
 disk with sufficient space. If you want to run distributed simulations make
 sure this path is accessible from all nodes of your cluster.
 
 Invoking
 $ ./run_orchestrated_stdp.sh
-will run the the three scripts 1run_init.sh, 2run_learn.sh and 3run_cued.sh and
+will run the three scripts 1run_init.sh, 2run_learn.sh and 3run_cued.sh and
 the necessary bootstrap script in sequence which corresponds to the two-fold
 learning and recall protocol shown in Figure 3.
