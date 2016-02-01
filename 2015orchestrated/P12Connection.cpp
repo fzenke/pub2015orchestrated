@@ -98,10 +98,8 @@ void P12Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 
 	}
 
-	// registering the right amount of spike attributes
-	// this line is very important finding bugs due to 
-	// this being wrong or missing is hard 
-	src->set_num_spike_attributes(1);
+	// Registering the right number of spike attributes
+	add_number_of_spike_attributes(1);
 }
 
 void P12Connection::finalize() 
@@ -202,25 +200,28 @@ inline AurynWeight P12Connection::dw_post(const NeuronID pre, const NeuronID pos
 
 void P12Connection::propagate_forward()
 {
+	// loop over spikes
+	for (int i = 0 ; i < src->get_spikes()->size() ; ++i ) {
+		// get spike at pos i in SpikeContainer
+		NeuronID spike = src->get_spikes()->at(i);
 
-	SpikeContainer::const_iterator spikes_end = src->get_spikes()->end();
-	AttributeContainer::const_iterator attr = src->get_attributes()->begin();
-	// process spikes
-	for (SpikeContainer::const_iterator spike = src->get_spikes()->begin() ; // spike = pre_spike
-			spike != spikes_end ; ++spike ) {
-		for (NeuronID * c = w->get_row_begin(*spike) ; c != w->get_row_end(*spike) ; ++c ) { // c = post index
-			AurynWeight value = fwd_data[c-fwd_ind] * *attr; 
-			NeuronID translated_spike = dst->global2rank(*c); // only to be used for post traces
+		// extract spike attribute from attribute stack;
+		AurynFloat attribute = get_spike_attribute(i);
+
+		// loop over postsynaptic targets
+		for (NeuronID * c = w->get_row_begin(spike) ; 
+				c != w->get_row_end(spike) ; 
+				++c ) {
+			AurynWeight value = fwd_data[c-fwd_ind] * attribute; 
 			transmit( *c , value );
 			if ( stdp_active ) {
+			  NeuronID translated_spike = dst->global2rank(*c); // only to be used for post traces
 			  fwd_data[c-fwd_ind] -= dw_pre(translated_spike,&fwd_data[c-fwd_ind]);
 			  if ( fwd_data[c-fwd_ind] < 0 ) 
 				fwd_data[c-fwd_ind] = 0.;
 			}
 		}
-		++attr;
 	}
-
 }
 
 void P12Connection::propagate_backward()
