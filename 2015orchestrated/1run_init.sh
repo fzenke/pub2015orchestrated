@@ -2,7 +2,7 @@
 
 . ./globalvars.sh
 
-make -C $DIR -j8 $BIN && mpirun -n 4 $DIR/$BIN \
+make -C $DIR -j8 $BIN && mpirun -n $NP $DIR/$BIN \
 	--dir $OUTDIR \
 	--prefix rf1 --size 4096 --save \
 	--monf ./data/rf1.pat \
