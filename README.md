@@ -1,12 +1,15 @@
-This directory contains Auryn classes and simulations to reproduce on-line
-learning with orchestrated plasticity rules. 
+# This repository contains Auryn classes and simulations to reproduce on-line learning with orchestrated plasticity rules. 
+
+These simulations are to reproduce the findings from 
+Zenke, F., Agnes, E.J., and Gerstner, W. (2015). Diverse synaptic plasticity mechanisms orchestrated to form and retrieve memories in spiking neural networks. Nat Commun 6.
+http://www.nature.com/ncomms/2015/150421/ncomms7922/full/ncomms7922.html
 
 This is the development branch to run with Auryn > v0.7.  
 Tested with Auryn develop branch commit
 7d834eb6d2be03a411031d4e12a876f44227109f
 
 
-# Auryn classes
+## Auryn classes
 ```
 P10Connection 
        Implements the excitatory connection object for orchestrated
@@ -21,7 +24,7 @@ P12Connection
        sliding threshold.
 ```
 
-# Running an example
+## Running an example
 
 This simulation reproduces the key results from the orchestrated plasticity
 simulation as described in Figure 3 you need to install and compile Auryn
