@@ -1,4 +1,4 @@
-# This repository contains Auryn classes and simulations to reproduce on-line learning with orchestrated plasticity rules. 
+# On-line learning with orchestrated plasticity rules
 
 These simulations are to reproduce the findings from 
 Zenke, F., Agnes, E.J., and Gerstner, W. (2015). Diverse synaptic plasticity mechanisms orchestrated to form and retrieve memories in spiking neural networks. Nat Commun 6.
