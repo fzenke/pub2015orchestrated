@@ -1,9 +1,13 @@
-### This repository contains Auryn classes and simulations to reproduce on-line learning with orchestrated plasticity rules.
+# Auryn classes and simulations to reproduce on-line learning with orchestrated plasticity rules.
 
-A similiar version to this document is also available at
+These simulations are to reproduce the findings from Zenke, F., Agnes, E.J., and Gerstner, W. (2015). 
+Diverse synaptic plasticity mechanisms orchestrated to form and retrieve memories in spiking neural networks. Nat Commun 6. 
+http://www.nature.com/ncomms/2015/150421/ncomms7922/full/ncomms7922.html
+
+A similiar version to this document is available at
 https://www.fzenke.net/auryn/doku.php?id=examples:orchestrated_plasticity
 
-# Auryn classes
+## Auryn classes
 ```
 P10Connection 
        Implements the excitatory connection object for orchestrated
@@ -18,12 +22,13 @@ P12Connection
        sliding threshold.
 ```
 
-# Running an example
+## Running an example
 
 To run the orchestrated plasticity simulation as described in Figure 3 of you
-need to install and compile Auryn v0.5. In the following we will assume that you
-have git installed and up and running on your system. Moreover, you have all
-dependencies to compile Auryn installed.
+need to install and compile Auryn v0.5 (the develop branch of this repository 
+might be tracking more recent versions of Auryn). 
+In the following we will assume that you have git installed and up and running
+on your system. Moreover, you have all dependencies to compile Auryn installed.
 
 To download and compile Auryn do the following:
 ```
@@ -36,7 +41,7 @@ $ make
 Should you have difficulties compiling the simulator please refer to the
 installation and troubleshooting section in the manual (www.fzenke.net/auryn).
 
-Now go to the installation directory of the simulation code (when you are
+Now go to the installation directory of the `src/` simulation code (when you are
 reading this, chances are you are already in this directory). And run make
 there. This should build the necessary Auryn libraries that implement plasticity
 and the simulation libraries. For instance the binary file sim_rc_p10c is the
