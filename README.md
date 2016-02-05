@@ -44,10 +44,8 @@ installation and troubleshooting section in the manual (www.fzenke.net/auryn).
 Now go to the installation directory of the `src/` simulation code (when you are
 reading this, chances are you are already in this directory). And run `make`
 there. This should build the necessary Auryn libraries that implement plasticity
-and the simulation libraries. For instance the binary file sim_rc_p10c is the
-one behind Figure 3 in Zenke, F., Agnes, E.J., Gerstner, W., 2015. Diverse
-synaptic plasticity mechanisms orchestrated to form and retrieve memories in
-spiking neural networks. Nature Communications.
+and the simulation libraries. For instance the simulation program `sim_rc_p10c` is the
+one behind Figure 3 in Zenke, F., Agnes, E.J., Gerstner, W., (2015).
 
 Finally update the output path in globalvars.sh to point to a portion of disk
 with sufficient space. If you want to run distributed simulations make sure this
