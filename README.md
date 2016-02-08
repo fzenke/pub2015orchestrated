@@ -30,7 +30,9 @@ might be tracking more recent versions of Auryn).
 In the following we will assume that you have git installed and up and running
 on your system. Moreover, you have all dependencies to compile Auryn installed.
 
-To download and compile Auryn do the following:
+### Download and compile Auryn 
+
+In essence do the following:
 ```
 $ cd ~
 $ git clone https://github.com/fzenke/auryn.git
@@ -40,6 +42,8 @@ $ make
 
 Should you have difficulties compiling the simulator please refer to the
 installation and troubleshooting section in the manual (www.fzenke.net/auryn).
+
+### Compile simulation classes and programs
 
 Now go to the installation directory of the `src/` simulation code (when you are
 reading this, chances are you are already in this directory). And run `make`
@@ -51,6 +55,7 @@ Finally update the output path in globalvars.sh to point to a portion of disk
 with sufficient space. If you want to run distributed simulations make sure this
 path is accessible from all nodes of your cluster.
 
+### Run simulation script
 Invoking
 `$ ./run_orchestrated_stdp.sh`
 will run the the three scripts 1run_init.sh, 2run_learn.sh and 3run_cued.sh in
