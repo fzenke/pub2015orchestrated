@@ -16,7 +16,7 @@ echo "Running first leg of simulation to determine neuron selectivity."
 echo "Generating trigger file"
 ./scripts/mktrigfile.awk $OUTDIR/rf1.0.stimtimes > data/rf1.trig
 
-echo "Create merged ras file from files from different ranks "
+echo "Merging ras files from different ranks "
 sort -g -m $OUTDIR/rf1.*.e.ras > $OUTDIR/rf1.e.ras
 
 echo "Computing PSTH..."
