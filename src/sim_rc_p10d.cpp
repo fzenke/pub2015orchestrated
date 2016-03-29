@@ -268,32 +268,29 @@ int main(int ac, char* av[])
 	sprintf(strbuf, "%s/%s.%d.rates", dir.c_str(), file_prefix.c_str(), world.rank() );
 	RateMonitor * rmon = new RateMonitor( neurons, strbuf, 2 );
 
-	sprintf(strbuf, "%s/%s.%d.we", dir.c_str(), file_prefix.c_str(), world.rank() );
-	WeightMonitor * wmone = new WeightMonitor( con_e, strbuf );
-	for ( int i = 0 ; i < 100 ; ++i )
-		wmone->add_to_list(i,0);
-
-	sprintf(strbuf, "%s/%s.%d.wectl", dir.c_str(), file_prefix.c_str(), world.rank() );
-	WeightMonitor * wmonctl = new WeightMonitor( con_ctl, strbuf );
-	for ( int i = 0 ; i < 100 ; ++i )
-		wmonctl->add_to_list(i,0);
-
-	RateChecker * chk = new RateChecker( neurons , -1 , 20. , 1);
-
 	if ( !wmat.empty() ) {
 		logger->msg("Loading weight matrix ...",PROGRESS,true);
-		con_e->load_from_complete_file(wmat);
+		con_e->load_fragile_matrix(wmat);
 		con_e->set_all(we);
 
-		con_ctl->load_from_complete_file(wmat);
+		con_ctl->load_fragile_matrix(wmat);
 		con_ctl->set_all(we);
 		con_ctl->set_all(wctl);
 	}
 
+	sprintf(strbuf, "%s/%s.%d.we", dir.c_str(), file_prefix.c_str(), world.rank() );
+	WeightMonitor * wmone = new WeightMonitor( con_e, strbuf );
+	wmone->add_equally_spaced(20);
+
+	sprintf(strbuf, "%s/%s.%d.wectl", dir.c_str(), file_prefix.c_str(), world.rank() );
+	WeightMonitor * wmonctl = new WeightMonitor( con_ctl, strbuf );
+	wmonctl->add_equally_spaced(20);
+
+
 	con_e->stdp_active = false;
 	con_ctl->stdp_active = false;
 
-	if (!sys->run(60,false)) 
+	if (!sys->run(60)) 
 			errcode = 1;
 
 	con_e->stdp_active = true;
