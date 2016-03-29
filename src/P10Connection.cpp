@@ -343,10 +343,12 @@ void P10Connection::set_beta(AurynFloat b)
 bool P10Connection::write_to_file(string filename)
 {
 
+	logger->msg("Writing consolidation variable to file...", VERBOSE);
 	std::stringstream oss;
 	oss << filename << "2";
+	SparseConnection::write_to_file(w_solid_matrix, oss.str());
 
-	SparseConnection::write_to_file(w_solid_matrix,oss.str());
+	logger->msg("Writing short-term plasticity state to file...", VERBOSE);
 
 	oss.str("");
 	oss << filename << ".cstate";
@@ -367,6 +369,7 @@ bool P10Connection::write_to_file(string filename)
 
 	return SparseConnection::write_to_file(filename);
 }
+
 
 bool P10Connection::load_from_file(string filename)
 {
@@ -403,12 +406,14 @@ bool P10Connection::load_from_file(string filename)
 void P10Connection::load_fragile_matrix(string filename)
 {
 	// load fragile (w) from complete file 
-	SparseConnection::load_from_complete_file(filename);
+	DuplexConnection::load_from_complete_file(filename);
 
 	// now adapt the size of the solid matrix to the new w matrix
 	w_solid_matrix->resize_buffer_and_clear(w->get_nonzero());
 	// copy element positions
 	w_solid_matrix->copy(w);
+	// this replaces finalize
+	w_solid_matrix->fill_zeros();
 	// set all elements to the lower fixed point
 	w_solid_matrix->set_all(weight_a);
 }
