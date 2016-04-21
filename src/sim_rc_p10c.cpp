@@ -617,7 +617,7 @@ int main(int ac, char* av[])
 		stimgroup->load_patterns(stimfile.c_str());
 		stimgroup->set_next_action_time(50); // let network settle for some time
 
-		sprintf(strbuf, "%s/%s.%d.s.bras", dir.c_str(), file_prefix.c_str(), world.rank() );
+		sprintf(strbuf, "%s/%s.%d.s.spk", dir.c_str(), file_prefix.c_str(), world.rank() );
 		BinarySpikeMonitor * smon_s = new BinarySpikeMonitor( stimgroup, string(strbuf), size );
 
 		// gives the first 3 patterns half of the probability
@@ -749,11 +749,11 @@ int main(int ac, char* av[])
 	// sprintf(strbuf, "%s/%s.%d.wpe", dir.c_str(), file_prefix.c_str(), world.rank() );
 	// new WeightStatsMonitor( con_se, string(strbuf) );
 
-	sprintf(strbuf, "%s/%s.%d.e.bras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.e.spk", dir.c_str(), file_prefix.c_str(), world.rank() );
 	BinarySpikeMonitor * smon_e = new BinarySpikeMonitor( neurons_e, string(strbuf), size );
 
 
-	sprintf(strbuf, "%s/%s.%d.i2.bras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.i2.spk", dir.c_str(), file_prefix.c_str(), world.rank() );
 	BinarySpikeMonitor * smon_i2 = new BinarySpikeMonitor( neurons_i2, string(strbuf), size );
 
 	sprintf(strbuf, "%s/%s.%d.e.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
@@ -802,6 +802,9 @@ int main(int ac, char* av[])
 		sprintf(strbuf, "%s/%s", dir.c_str(), file_prefix.c_str() );
 		sys->save_network_state(string(strbuf));
 	}
+
+	sprintf(strbuf, "%s/%s.%d.ee.wmat", dir.c_str(), file_prefix.c_str(), world.rank() );
+	con_ee->write_to_file(strbuf);
 
 	logger->msg("Freeing ...",PROGRESS,true);
 	delete sys;
