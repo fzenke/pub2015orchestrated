@@ -360,7 +360,7 @@ int main(int ac, char* av[])
 
 	sprintf(strbuf, "%s/%s.%d.log", dir.c_str(), file_prefix.c_str(), world.rank());
 	string logfile = strbuf;
-	logger = new Logger(logfile,world.rank());
+	logger = new Logger(logfile,world.rank(),PROGRESS, EVERYTHING);
 
 	sys = new System(&world);
 	// END Global stuff
@@ -799,8 +799,8 @@ int main(int ac, char* av[])
 			errcode = 1;
 
 	if ( save ) {
-		sprintf(strbuf, "%s/%s", dir.c_str(), file_prefix.c_str() );
-		sys->save_network_state(string(strbuf));
+		sys->set_output_dir(dir);
+		sys->save_network_state(file_prefix);
 	}
 
 	sprintf(strbuf, "%s/%s.%d.ee.wmat", dir.c_str(), file_prefix.c_str(), world.rank() );
