@@ -21,11 +21,7 @@
 #ifndef GLOBALPFCONNECTION_H_
 #define GLOBALPFCONNECTION_H_
 
-#include "auryn_definitions.h"
-#include "DuplexConnection.h"
-#include "EulerTrace.h"
-#include "LinearTrace.h"
-#include "SpikeDelay.h"
+#include "auryn.h"
 
 #define TRACE EulerTrace
 

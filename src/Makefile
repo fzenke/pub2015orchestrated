@@ -5,7 +5,7 @@ AURYNPATH=$(HOME)/auryn
 AURYNINC=$(AURYNPATH)/src
 
 # Path to Auryn library
-AURYNLIB=$(AURYNPATH)/build/src
+AURYNLIB=$(AURYNPATH)/build/release/src
 
 
 

@@ -21,10 +21,7 @@
 #ifndef P10CONNECTION_H_
 #define P10CONNECTION_H_
 
-#include "auryn_definitions.h"
-#include "DuplexConnection.h"
-#include "EulerTrace.h"
-#include "LinearTrace.h"
+#include "auryn.h"
 
 #define P10DECAYTERM_H 4.0
 #define P10CONNECTION_EULERUPGRADE_STEP 0.99
