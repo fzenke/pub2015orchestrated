@@ -178,18 +178,8 @@ int main(int ac, char* av[])
 		std::cerr << "Exception of unknown type!\n";
     }
 
-	// BEGIN Global stuff
-	mpi::environment env(ac, av);
-	mpi::communicator world;
-	communicator = &world;
-
-	sprintf(strbuf, "%s/%s.%d.log", dir.c_str(), file_prefix.c_str(), world.rank());
-	string logfile = strbuf;
-	logger = new Logger(logfile,world.rank(),PROGRESS,EVERYTHING);
-
-	sys = new System(&world);
-	// END Global stuff
 	
+	auryn_init(ac, av, dir);
 
 	sys->quiet = true;
 
@@ -247,25 +237,25 @@ int main(int ac, char* av[])
 	con_ctl->set_weight_a(0.0);
 	con_ctl->set_weight_c(weightc);
 
-	sprintf(strbuf, "%s/%s.%d.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	SpikeMonitor * smon_e = new SpikeMonitor( neurons, strbuf, size);
 
-	// sprintf(strbuf, "%s/%s.%d.p.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.p.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// SpikeMonitor * smon_p = new SpikeMonitor( poisson_e, strbuf, size);
 
-	// sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// VoltageMonitor * vmon = new VoltageMonitor( neurons, 0, strbuf, 10 );
 
-	// sprintf(strbuf, "%s/%s.%d.ampa", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.ampa", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// AmpaMonitor * ampamon = new AmpaMonitor( neurons, 0, strbuf, 10 );
 
-	// sprintf(strbuf, "%s/%s.%d.gaba", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.gaba", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// GabaMonitor * gabamon = new GabaMonitor( neurons, 0, strbuf, 10 );
 
-	sprintf(strbuf, "%s/%s.%d.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.prate", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	PopulationRateMonitor * pmon = new PopulationRateMonitor( neurons, strbuf, 10 );
 
-	sprintf(strbuf, "%s/%s.%d.rates", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.rates", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	RateMonitor * rmon = new RateMonitor( neurons, strbuf, 2 );
 
 	if ( !wmat.empty() ) {
@@ -278,11 +268,11 @@ int main(int ac, char* av[])
 		con_ctl->set_all(wctl);
 	}
 
-	sprintf(strbuf, "%s/%s.%d.we", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.we", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	WeightMonitor * wmone = new WeightMonitor( con_e, strbuf );
 	wmone->add_equally_spaced(20);
 
-	sprintf(strbuf, "%s/%s.%d.wectl", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.wectl", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	WeightMonitor * wmonctl = new WeightMonitor( con_ctl, strbuf );
 	wmonctl->add_equally_spaced(20);
 
@@ -299,7 +289,7 @@ int main(int ac, char* av[])
 	if (!sys->run(simtime,false)) 
 			errcode = 1;
 
-	// sprintf(strbuf, "%s/%s.%d.wmat", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// con_e->write_to_file(strbuf);
 	sprintf(strbuf, "%s/%s", dir.c_str(), file_prefix.c_str() );
 	sys->save_network_state(strbuf);
@@ -308,6 +298,6 @@ int main(int ac, char* av[])
 	delete sys;
 
 	if (errcode)
-		env.abort(errcode);
+		mpienv->abort(errcode);
 	return errcode;
 }
