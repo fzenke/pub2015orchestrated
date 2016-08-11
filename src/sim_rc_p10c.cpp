@@ -798,11 +798,11 @@ int main(int ac, char* av[])
 	sprintf(strbuf, "%s/%s.%d.ext.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	con_stim_e->write_to_file(strbuf);
 
-	logger->msg("Freeing ...",PROGRESS,true);
-	delete sys;
 
 	if (errcode)
 		mpienv->abort(errcode);
+	logger->msg("Freeing ...",PROGRESS,true);
+	auryn_free();
 	return errcode;
 
 }

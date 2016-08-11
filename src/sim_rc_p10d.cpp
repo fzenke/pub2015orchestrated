@@ -294,10 +294,10 @@ int main(int ac, char* av[])
 	sprintf(strbuf, "%s/%s", dir.c_str(), file_prefix.c_str() );
 	sys->save_network_state(strbuf);
 
-	logger->msg("Freeing ...",PROGRESS,true);
-	delete sys;
 
 	if (errcode)
 		mpienv->abort(errcode);
+	logger->msg("Freeing ...",PROGRESS,true);
+	auryn_free();
 	return errcode;
 }
