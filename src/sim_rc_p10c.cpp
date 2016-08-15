@@ -800,11 +800,11 @@ int main(int ac, char* av[])
 	con_stim_e->write_to_file(strbuf);
 
 
-	if (errcode)
-		mpienv->abort(errcode);
+	if (errcode) auryn_abort(errcode);
+
 	logger->msg("Freeing ...",PROGRESS,true);
 	auryn_free();
-	return errcode;
 
+	return errcode;
 }
 
