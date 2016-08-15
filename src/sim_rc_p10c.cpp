@@ -353,7 +353,7 @@ int main(int ac, char* av[])
     }
 
 
-	auryn_init( ac, av, dir );
+	auryn_init( ac, av, dir, "sim_rc_p10c", file_prefix );
 	
 	//log params
 	logger->parameter("alpha",alpha);
@@ -628,36 +628,8 @@ int main(int ac, char* av[])
 	}
 
 
-	// load if necessary
-	if (!infilename.empty()) {
-		logger->msg("Loading from file ...",PROGRESS,true);
-		sys->load_network_state(infilename.c_str());
-		// auryn_vector_float * foo = neurons_i2->get_state_vector("g_nmda");
-		// auryn_vector_float_set_all( foo, 5.0 );
-	}
-
 
 		
-	if ( !prefile.empty() && chi > 0.0 ) {
-		con_ee->patterns_ignore_gamma = true;
-		con_ee->load_patterns(prefile,chi,false);
-		con_ee->consolidate();
-
-	}
-
-	if ( !prefile.empty() && xi > 0.0 ) {
-		con_stim_e->patterns_ignore_gamma = true;
-		con_stim_e->load_patterns(prefile,xi,false);
-		if ( consolidate_initial_weights )
-			con_stim_e->consolidate();
-	}
-
-	if ( !recfile.empty() && xi > 0.0 ) {
-		con_stim_e->load_fragile_matrix(recfile); // TODO
-		con_stim_e->scale_all(xi);
-		if ( consolidate_initial_weights )
-			con_stim_e->consolidate();
-	}
 
 	sprintf(strbuf, "%s/%s.%d.sse", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	WeightMonitor * wmon_s = new WeightMonitor( con_stim_e, string(strbuf), 1.0 ); 
@@ -753,6 +725,35 @@ int main(int ac, char* av[])
 	PopulationRateMonitor * pmon_i2 = new PopulationRateMonitor( neurons_i2, string(strbuf), 0.1 );
 
 	RateChecker * chk = new RateChecker( neurons_e , -1 , 20. , 0.1);
+
+	// load if necessary
+	if (!infilename.empty()) {
+		logger->msg("Loading from file ...",PROGRESS,true);
+		sys->load_network_state(infilename.c_str());
+		// auryn_vector_float * foo = neurons_i2->get_state_vector("g_nmda");
+		// auryn_vector_float_set_all( foo, 5.0 );
+	}
+
+	if ( !prefile.empty() && chi > 0.0 ) {
+		con_ee->patterns_ignore_gamma = true;
+		con_ee->load_patterns(prefile,chi,false);
+		con_ee->consolidate();
+
+	}
+
+	if ( !prefile.empty() && xi > 0.0 ) {
+		con_stim_e->patterns_ignore_gamma = true;
+		con_stim_e->load_patterns(prefile,xi,false);
+		if ( consolidate_initial_weights )
+			con_stim_e->consolidate();
+	}
+
+	if ( !recfile.empty() && xi > 0.0 ) {
+		con_stim_e->load_fragile_matrix(recfile); // TODO
+		con_stim_e->scale_all(xi);
+		if ( consolidate_initial_weights )
+			con_stim_e->consolidate();
+	}
 
 
 	// prime
