@@ -25,7 +25,7 @@
 
 #define N_EXEC_WEIGHTS 800
 
-using namespace std;
+using namespace auryn;
 
 namespace po = boost::program_options;
 namespace mpi = boost::mpi;
@@ -167,18 +167,18 @@ int main(int ac, char* av[])
         po::notify(vm);    
 
         if (vm.count("help")) {
-            cout << desc << "\n";
+			std::cout << desc << "\n";
             return 1;
         }
 
         if (vm.count("load")) {
-            cout << "load from matrix " 
+			std::cout << "load from matrix " 
                  << vm["load"].as<string>() << ".\n";
 			infilename = vm["load"].as<string>();
         } 
 
         if (vm.count("prefix")) {
-            cout << "prefix from matrix " 
+			std::cout << "prefix from matrix " 
                  << vm["prefix"].as<string>() << ".\n";
 			file_prefix = vm["prefix"].as<string>();
         } 
@@ -219,163 +219,163 @@ int main(int ac, char* av[])
 			quiet = true;
         } 
         if (vm.count("alpha")) {
-            cout << "alpha set to " 
+			std::cout << "alpha set to " 
                  << vm["alpha"].as<double>() << ".\n";
 			alpha = vm["alpha"].as<double>();
         } 
 
         if (vm.count("kappa")) {
-            cout << "kappa set to " 
+			std::cout << "kappa set to " 
                  << vm["kappa"].as<double>() << ".\n";
 			kappa = vm["kappa"].as<double>();
         } 
 
         if (vm.count("taud")) {
-            cout << "taud set to " 
+			std::cout << "taud set to " 
                  << vm["taud"].as<double>() << ".\n";
 			taud = vm["taud"].as<double>();
         } 
 
         if (vm.count("tauf")) {
-            cout << "tauf set to " 
+			std::cout << "tauf set to " 
                  << vm["tauf"].as<double>() << ".\n";
 			tauf = vm["tauf"].as<double>();
         } 
 
         if (vm.count("tauh")) {
-            cout << "tauh set to " 
+			std::cout << "tauh set to " 
                  << vm["tauh"].as<double>() << ".\n";
 			tauh = vm["tauh"].as<double>();
         } 
 
         if (vm.count("ujump")) {
-            cout << "ujump set to " 
+			std::cout << "ujump set to " 
                  << vm["ujump"].as<double>() << ".\n";
 			ujump = vm["ujump"].as<double>();
         } 
 
         if (vm.count("simtime")) {
-            cout << "simtime set to " 
+			std::cout << "simtime set to " 
                  << vm["simtime"].as<double>() << ".\n";
 			simtime = vm["simtime"].as<double>();
         } 
 
         if (vm.count("ontime")) {
-            cout << "ontime set to " 
+			std::cout << "ontime set to " 
                  << vm["ontime"].as<double>() << ".\n";
 			ontime = vm["ontime"].as<double>();
         } 
 
         if (vm.count("offtime")) {
-            cout << "offtime set to " 
+			std::cout << "offtime set to " 
                  << vm["offtime"].as<double>() << ".\n";
 			offtime = vm["offtime"].as<double>();
         } 
 
         if (vm.count("dir")) {
-            cout << "dir set to " 
+			std::cout << "dir set to " 
                  << vm["dir"].as<string>() << ".\n";
 			dir = vm["dir"].as<string>();
         } 
 
         if (vm.count("chi")) {
-            cout << "chi set to " 
+			std::cout << "chi set to " 
                  << vm["chi"].as<double>() << ".\n";
 			chi = vm["chi"].as<double>();
         } 
 
         if (vm.count("xi")) {
-            cout << "xi set to " 
+			std::cout << "xi set to " 
                  << vm["xi"].as<double>() << ".\n";
 			xi = vm["xi"].as<double>();
         } 
 
         if (vm.count("wext")) {
-            cout << "wext set to " 
+			std::cout << "wext set to " 
                  << vm["wext"].as<double>() << ".\n";
 			wext = vm["wext"].as<double>();
         } 
 
         if (vm.count("wee")) {
-            cout << "wee set to " 
+			std::cout << "wee set to " 
                  << vm["wee"].as<double>() << ".\n";
 			wee = vm["wee"].as<double>();
         } 
 
         if (vm.count("wei")) {
-            cout << "wei set to " 
+			std::cout << "wei set to " 
                  << vm["wei"].as<double>() << ".\n";
 			wei = vm["wei"].as<double>();
         } 
 
         if (vm.count("wii")) {
-            cout << "wii set to " 
+			std::cout << "wii set to " 
                  << vm["wii"].as<double>() << ".\n";
 			wii = vm["wii"].as<double>();
         } 
 
         if (vm.count("wie")) {
-            cout << "wie set to " 
+			std::cout << "wie set to " 
                  << vm["wie"].as<double>() << ".\n";
 			wie = vm["wie"].as<double>();
         } 
 
         if (vm.count("extsparse")) {
-            cout << "extsparse set to " 
+			std::cout << "extsparse set to " 
                  << vm["extsparse"].as<double>() << ".\n";
 			sparseness_ext = vm["extsparse"].as<double>();
         } 
 
         if (vm.count("intsparse")) {
-            cout << "intsparse set to " 
+			std::cout << "intsparse set to " 
                  << vm["intsparse"].as<double>() << ".\n";
 			sparseness = vm["intsparse"].as<double>();
         } 
 
         if (vm.count("eta")) {
-            cout << "eta set to " 
+			std::cout << "eta set to " 
                  << vm["eta"].as<double>() << ".\n";
 			eta = vm["eta"].as<double>();
         } 
 
         if (vm.count("beta")) {
-            cout << "beta set to " 
+			std::cout << "beta set to " 
                  << vm["beta"].as<double>() << ".\n";
 			beta = vm["beta"].as<double>();
         } 
 
         if (vm.count("potstrength")) {
-            cout << "potstrength set to " 
+			std::cout << "potstrength set to " 
                  << vm["potstrength"].as<double>() << ".\n";
 			pot_strength = vm["potstrength"].as<double>();
         } 
 
         if (vm.count("delta")) {
-            cout << "delta set to " 
+			std::cout << "delta set to " 
                  << vm["delta"].as<double>() << ".\n";
 			delta = vm["delta"].as<double>();
         } 
 
         if (vm.count("weight_a")) {
-            cout << "weight_a set to " 
+			std::cout << "weight_a set to " 
                  << vm["weight_a"].as<double>() << ".\n";
 			weight_a = vm["weight_a"].as<double>();
         } 
 
         if (vm.count("weight_c")) {
-            cout << "weight_c set to " 
+			std::cout << "weight_c set to " 
                  << vm["weight_c"].as<double>() << ".\n";
 			weight_c = vm["weight_c"].as<double>();
         } 
 
         if (vm.count("size")) {
-            cout << "size set to " 
+			std::cout << "size set to " 
                  << vm["size"].as<int>() << ".\n";
 			size = vm["size"].as<int>();
         } 
 
         if (vm.count("stimfile")) {
-            cout << "stimfile set to " 
+			std::cout << "stimfile set to " 
                  << vm["stimfile"].as<string>() << ", ";
 			stimfile = vm["stimfile"].as<string>();
 			monfile = stimfile;
@@ -383,43 +383,43 @@ int main(int ac, char* av[])
         } 
 
         if (vm.count("prefile")) {
-            cout << "prefile set to " 
+			std::cout << "prefile set to " 
                  << vm["prefile"].as<string>() << ", ";
 			prefile = vm["prefile"].as<string>();
         } 
 
         if (vm.count("recfile")) {
-            cout << "recfile set to " 
+			std::cout << "recfile set to " 
                  << vm["recfile"].as<string>() << ", ";
 			recfile = vm["recfile"].as<string>();
         } 
 
         if (vm.count("scale")) {
-            cout << "scale set to " 
+			std::cout << "scale set to " 
                  << vm["scale"].as<double>() << ".\n";
 			scale = vm["scale"].as<double>();
         } 
 
         if (vm.count("adapt")) {
-            cout << "adapt set to " 
+			std::cout << "adapt set to " 
                  << vm["adapt"].as<double>() << ".\n";
 			adapt = vm["adapt"].as<double>();
         } 
 
         if (vm.count("bgrate")) {
-            cout << "bgrate set to " 
+			std::cout << "bgrate set to " 
                  << vm["bgrate"].as<double>() << ".\n";
 			bgrate = vm["bgrate"].as<double>();
         } 
 
         if (vm.count("preferred")) {
-            cout << "preferred set to " 
+			std::cout << "preferred set to " 
                  << vm["preferred"].as<int>() << ".\n";
 			preferred = vm["preferred"].as<int>();
         } 
 
         if (vm.count("monfile")) {
-            cout << "monfile set to " 
+			std::cout << "monfile set to " 
                  << vm["monfile"].as<string>() << ", ";
 			monfile = vm["monfile"].as<string>();
         } 
@@ -429,33 +429,21 @@ int main(int ac, char* av[])
         } 
 
         if (vm.count("seed")) {
-            cout << "seed set to " 
+			std::cout << "seed set to " 
                  << vm["seed"].as<int>() << ".\n";
 			seed = vm["seed"].as<int>();
         } 
     }
-    catch(exception& e) {
-        cerr << "error: " << e.what() << "\n";
+    catch(std::exception& e) {
+		std::cerr << "error: " << e.what() << "\n";
         return 1;
     }
     catch(...) {
-        cerr << "Exception of unknown type!\n";
+		std::cerr << "Exception of unknown type!\n";
     }
 
 
-	// BEGIN Global stuff
-	mpi::environment env(ac, av);
-	mpi::communicator world;
-	communicator = &world;
-
-	sprintf(strbuf, "%s/%s.%d.log", dir.c_str(), file_prefix.c_str(), world.rank());
-	string logfile = strbuf;
-	logger = new Logger(logfile,world.rank());
-
-	sys = new System(&world);
-	sys->quiet = quiet;
-	// END Global stuff
-
+	auryn_init( ac, av, dir );
 	
 	//log params
 	logger->parameter("alpha",alpha);
@@ -508,7 +496,7 @@ int main(int ac, char* av[])
 
 
 	StimulusGroup * stimgroup;
-	sprintf(strbuf, "%s/%s.%d.stimtimes", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.stimtimes", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	string stimtimefile = strbuf;
 	// stimgroup is initialized here. If stimfile is empty no patterns are loaded
 	// and it acts simply as PoissonGroup
@@ -719,11 +707,11 @@ int main(int ac, char* av[])
 		stimgroup->load_patterns(stimfile.c_str());
 		stimgroup->set_next_action_time(50); // let network settle for some time
 
-		sprintf(strbuf, "%s/%s.%d.s.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
+		sprintf(strbuf, "%s/%s.%d.s.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 		SpikeMonitor * smon_s = new SpikeMonitor( stimgroup, string(strbuf), size );
 
 		if ( preferred > 0 ) { 
-			vector<double> dist = stimgroup->get_distribution();
+			std::vector<double> dist = stimgroup->get_distribution();
 			int r = preferred;
 			for ( int i = 0 ; i < dist.size() ; ++i ) {
 				if ( i == r ) 
@@ -734,7 +722,7 @@ int main(int ac, char* av[])
 			stimgroup->set_distribution(dist);
 		}
 
-		sprintf(strbuf, "%s/%s.%d.wse", dir.c_str(), file_prefix.c_str(), world.rank() );
+		sprintf(strbuf, "%s/%s.%d.wse", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 		new WeightStatsMonitor( con_stim_e, string(strbuf) );
 	}
 
@@ -760,7 +748,7 @@ int main(int ac, char* av[])
 			con_stim_e->consolidate();
 	}
 
-	sprintf(strbuf, "%s/%s.%d.wse", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.wse", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	new WeightStatsMonitor( con_stim_e, string(strbuf) );
 
 	if ( !recfile.empty() && xi > 0.0 ) {
@@ -768,11 +756,11 @@ int main(int ac, char* av[])
 		con_stim_e->scale_all(xi);
 	}
 
-	sprintf(strbuf, "%s/%s.%d.sse", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.sse", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	WeightMonitor * wmon_s = new WeightMonitor( con_stim_e, string(strbuf), 1.0 ); 
 	wmon_s->add_equally_spaced(50);
 	if ( !monfile.empty() ) {
-		sprintf(strbuf, "%s/%s.%d.pact", dir.c_str(), file_prefix.c_str(), world.rank() );
+		sprintf(strbuf, "%s/%s.%d.pact", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 		PatternMonitor * patmon = new PatternMonitor( neurons_e, string(strbuf) , monfile.c_str(), 100);
 
 		if ( !stimfile.empty() ) // 
@@ -782,83 +770,83 @@ int main(int ac, char* av[])
 	}
 
 
-	// sprintf(strbuf, "%s/%s.%d.sei", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.sei", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// WeightMonitor * wmon_ei = new WeightMonitor( con_ei2, 0, 100, strbuf, 1.0, DATARANGE); 
 	
-	sprintf(strbuf, "%s/%s.%d.see", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.see", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	WeightMonitor * wmon = new WeightMonitor( con_ee, string(strbuf), 1.0); 
 	wmon->add_equally_spaced(50);
 
 	if ( !monfile.empty() ) 
 		wmon->load_pattern_connections(monfile,10,10,ASSEMBLIES_ONLY); // true for assemblies only
 
-	sprintf(strbuf, "%s/%s.%d.hom", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.hom", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	StateMonitor * stmon_hom = new StateMonitor( neurons_e, 5, "P11hom_vector", string(strbuf), 1 ); 
 
-	sprintf(strbuf, "%s/%s.%d.hom2", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.hom2", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	StateMonitor * stmon_hom2 = new StateMonitor( neurons_e, 6, "P11hom_vector", string(strbuf), 1 ); 
 
-	sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	VoltageMonitor * stmon_mem = new VoltageMonitor( neurons_e, 3, string(strbuf) ); 
-	stmon_mem->tStop = 10/dt; // stops recording after 10s
+	stmon_mem->record_for(10); // stops recording after 10s
 
-	sprintf(strbuf, "%s/%s.%d.imem", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.imem", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	VoltageMonitor * stmon_imem = new VoltageMonitor( neurons_i2, 3, string(strbuf) ); 
-	stmon_imem->tStop = 10/dt; // stops recording after 10s
+	stmon_imem->record_for(10); // stops recording after 10s
 
-	// sprintf(strbuf, "%s/%s.%d.si1e", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.si1e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// WeightMonitor * wmon_i1e = new WeightMonitor( con_i1e, string(strbuf) ); 
 	// wmon_i1e->add_equally_spaced(50);
 
-	sprintf(strbuf, "%s/%s.%d.si2e", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.si2e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	WeightMonitor * wmon_i2e = new WeightMonitor( con_i2e, string(strbuf) ); 
 	wmon_i2e->add_equally_spaced(50);
 
 
-	// sprintf(strbuf, "%s/%s.%d.ipe", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.ipe", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// WeightMonitor * wmon_ise = new WeightMonitor( con_se_inh, 0, 100, strbuf, 1.0, DATARANGE); 
 
-	// sprintf(strbuf, "%s/%s.%d.sii", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.sii", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// WeightMonitor * wmon_ii = new WeightMonitor( con_ii, 0, 100, strbuf, 1.0, DATARANGE); 
 	
-	sprintf(strbuf, "%s/%s.%d.wee", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.wee", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	new WeightStatsMonitor( con_ee, string(strbuf) );
 
-	sprintf(strbuf, "%s/%s.%d.wi2e", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.wi2e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	new WeightStatsMonitor( con_i2e, string(strbuf) );
 
 	if ( !monfile.empty() ) {
-		sprintf(strbuf, "%s/%s.%d.wprec", dir.c_str(), file_prefix.c_str(), world.rank() );
+		sprintf(strbuf, "%s/%s.%d.wprec", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 		WeightPatternMonitor * wpmon = new WeightPatternMonitor( con_ee, string(strbuf), 60 );
 		wpmon->load_patterns(monfile);
 	}
 
 	if ( !premonfile.empty() && !monfile.empty() ) {
-		sprintf(strbuf, "%s/%s.%d.wpin", dir.c_str(), file_prefix.c_str(), world.rank() );
+		sprintf(strbuf, "%s/%s.%d.wpin", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 		WeightPatternMonitor * wpmon = new WeightPatternMonitor( con_stim_e, string(strbuf), 60 );
 		wpmon->load_pre_patterns(premonfile);
 		wpmon->load_post_patterns(monfile);
 	}
 
-	// sprintf(strbuf, "%s/%s.%d.wi1e", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.wi1e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// new WeightStatsMonitor( con_i1e, string(strbuf) );
 
 
-	// sprintf(strbuf, "%s/%s.%d.wpe", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.wpe", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// new WeightStatsMonitor( con_se, string(strbuf) );
 
-	sprintf(strbuf, "%s/%s.%d.e.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.e.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	SpikeMonitor * smon_e = new SpikeMonitor( neurons_e, string(strbuf), size );
 
 
-	sprintf(strbuf, "%s/%s.%d.i2.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.i2.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	SpikeMonitor * smon_i2 = new SpikeMonitor( neurons_i2, string(strbuf), size );
 
-	sprintf(strbuf, "%s/%s.%d.e.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.e.prate", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	PopulationRateMonitor * pmon_e = new PopulationRateMonitor( neurons_e, string(strbuf), 0.1 );
 
 
-	sprintf(strbuf, "%s/%s.%d.i2.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.i2.prate", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	PopulationRateMonitor * pmon_i2 = new PopulationRateMonitor( neurons_i2, string(strbuf), 0.1 );
 
 	RateChecker * chk = new RateChecker( neurons_e , -1 , 20. , 0.1);
@@ -904,11 +892,11 @@ int main(int ac, char* av[])
 		sys->save_network_state(string(strbuf));
 	}
 
-	logger->msg("Freeing ...",PROGRESS,true);
-	delete sys;
 
 	if (errcode)
-		env.abort(errcode);
+		mpienv->abort(errcode);
+	logger->msg("Freeing ...",PROGRESS,true);
+	auryn_free();
 	return errcode;
 
 }

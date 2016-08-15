@@ -24,7 +24,7 @@
 
 #define N_EXEC_WEIGHTS 600
 
-using namespace std;
+using namespace auryn;
 
 namespace po = boost::program_options;
 namespace mpi = boost::mpi;
@@ -87,109 +87,99 @@ int main(int ac, char* av[])
         po::notify(vm);    
 
         if (vm.count("help")) {
-            cout << desc << "\n";
+			std::cout << desc << "\n";
             return 1;
         }
 
 
         if (vm.count("kappa")) {
-            cout << "kappa set to " 
+			std::cout << "kappa set to " 
                  << vm["kappa"].as<double>() << ".\n";
 			kappa = vm["kappa"].as<double>();
         } 
 
         if (vm.count("poststim")) {
-            cout << "poststim set to " 
+			std::cout << "poststim set to " 
                  << vm["poststim"].as<double>() << ".\n";
 			poststim = vm["poststim"].as<double>();
         } 
 
         if (vm.count("simtime")) {
-            cout << "simtime set to " 
+			std::cout << "simtime set to " 
                  << vm["simtime"].as<double>() << ".\n";
 			simtime = vm["simtime"].as<double>();
         } 
 
         if (vm.count("we")) {
-            cout << "we set to " 
+			std::cout << "we set to " 
                  << vm["we"].as<double>() << ".\n";
 			we = vm["we"].as<double>();
         } 
 
         if (vm.count("eta")) {
-            cout << "eta set to " 
+			std::cout << "eta set to " 
                  << vm["eta"].as<double>() << ".\n";
 			eta = vm["eta"].as<double>();
         } 
 
         if (vm.count("beta")) {
-            cout << "beta set to " 
+			std::cout << "beta set to " 
                  << vm["beta"].as<double>() << ".\n";
 			beta = vm["beta"].as<double>();
         } 
 
         if (vm.count("weightc")) {
-            cout << "weightc set to " 
+			std::cout << "weightc set to " 
                  << vm["weightc"].as<double>() << ".\n";
 			weightc = vm["weightc"].as<double>();
         } 
 
         if (vm.count("size")) {
-            cout << "size set to " 
+			std::cout << "size set to " 
                  << vm["size"].as<int>() << ".\n";
 			size = vm["size"].as<int>();
         } 
 
         if (vm.count("rates")) {
-            cout << "rates set to " 
+			std::cout << "rates set to " 
                  << vm["rates"].as<bool>() << ".\n";
 			record_rates = vm["rates"].as<bool>();
         } 
 
         if (vm.count("wmat")) {
-            cout << "wmat set to " 
+			std::cout << "wmat set to " 
                  << vm["wmat"].as<string>() << ".\n";
 			wmat = vm["wmat"].as<string>();
         } 
 
         if (vm.count("prefix")) {
-            cout << "prefix set to " 
+			std::cout << "prefix set to " 
                  << vm["prefix"].as<string>() << ".\n";
 			file_prefix = vm["prefix"].as<string>();
         } 
 
         if (vm.count("dir")) {
-            cout << "dir set to " 
+			std::cout << "dir set to " 
                  << vm["dir"].as<string>() << ".\n";
 			dir = vm["dir"].as<string>();
         } 
 
         if (vm.count("seed")) {
-            cout << "seed set to " 
+			std::cout << "seed set to " 
                  << vm["seed"].as<int>() << ".\n";
 			seed = vm["seed"].as<int>();
         } 
     }
-    catch(exception& e) {
-        cerr << "error: " << e.what() << "\n";
+    catch(std::exception& e) {
+		std::cerr << "error: " << e.what() << "\n";
         return 1;
     }
     catch(...) {
-        cerr << "Exception of unknown type!\n";
+		std::cerr << "Exception of unknown type!\n";
     }
 
-	// BEGIN Global stuff
-	mpi::environment env(ac, av);
-	mpi::communicator world;
-	communicator = &world;
-
-	sprintf(strbuf, "%s/%s.%d.log", dir.c_str(), file_prefix.c_str(), world.rank());
-	string logfile = strbuf;
-	logger = new Logger(logfile,world.rank(),PROGRESS,EVERYTHING);
-
-	sys = new System(&world);
-	// END Global stuff
 	
+	auryn_init(ac, av, dir);
 
 	sys->quiet = true;
 
@@ -247,53 +237,50 @@ int main(int ac, char* av[])
 	con_ctl->set_weight_a(0.0);
 	con_ctl->set_weight_c(weightc);
 
-	sprintf(strbuf, "%s/%s.%d.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	SpikeMonitor * smon_e = new SpikeMonitor( neurons, strbuf, size);
 
-	// sprintf(strbuf, "%s/%s.%d.p.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.p.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// SpikeMonitor * smon_p = new SpikeMonitor( poisson_e, strbuf, size);
 
-	// sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// VoltageMonitor * vmon = new VoltageMonitor( neurons, 0, strbuf, 10 );
 
-	// sprintf(strbuf, "%s/%s.%d.ampa", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.ampa", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// AmpaMonitor * ampamon = new AmpaMonitor( neurons, 0, strbuf, 10 );
 
-	// sprintf(strbuf, "%s/%s.%d.gaba", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.gaba", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// GabaMonitor * gabamon = new GabaMonitor( neurons, 0, strbuf, 10 );
 
-	sprintf(strbuf, "%s/%s.%d.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.prate", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	PopulationRateMonitor * pmon = new PopulationRateMonitor( neurons, strbuf, 10 );
 
-	sprintf(strbuf, "%s/%s.%d.rates", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.rates", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	RateMonitor * rmon = new RateMonitor( neurons, strbuf, 2 );
-
-	sprintf(strbuf, "%s/%s.%d.we", dir.c_str(), file_prefix.c_str(), world.rank() );
-	WeightMonitor * wmone = new WeightMonitor( con_e, strbuf );
-	for ( int i = 0 ; i < 100 ; ++i )
-		wmone->add_to_list(i,0);
-
-	sprintf(strbuf, "%s/%s.%d.wectl", dir.c_str(), file_prefix.c_str(), world.rank() );
-	WeightMonitor * wmonctl = new WeightMonitor( con_ctl, strbuf );
-	for ( int i = 0 ; i < 100 ; ++i )
-		wmonctl->add_to_list(i,0);
-
-	RateChecker * chk = new RateChecker( neurons , -1 , 20. , 1);
 
 	if ( !wmat.empty() ) {
 		logger->msg("Loading weight matrix ...",PROGRESS,true);
-		con_e->load_from_complete_file(wmat);
+		con_e->load_fragile_matrix(wmat);
 		con_e->set_all(we);
 
-		con_ctl->load_from_complete_file(wmat);
+		con_ctl->load_fragile_matrix(wmat);
 		con_ctl->set_all(we);
 		con_ctl->set_all(wctl);
 	}
 
+	sprintf(strbuf, "%s/%s.%d.we", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	WeightMonitor * wmone = new WeightMonitor( con_e, strbuf );
+	wmone->add_equally_spaced(20);
+
+	sprintf(strbuf, "%s/%s.%d.wectl", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	WeightMonitor * wmonctl = new WeightMonitor( con_ctl, strbuf );
+	wmonctl->add_equally_spaced(20);
+
+
 	con_e->stdp_active = false;
 	con_ctl->stdp_active = false;
 
-	if (!sys->run(60,false)) 
+	if (!sys->run(60)) 
 			errcode = 1;
 
 	con_e->stdp_active = true;
@@ -302,15 +289,15 @@ int main(int ac, char* av[])
 	if (!sys->run(simtime,false)) 
 			errcode = 1;
 
-	// sprintf(strbuf, "%s/%s.%d.wmat", dir.c_str(), file_prefix.c_str(), world.rank() );
+	// sprintf(strbuf, "%s/%s.%d.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// con_e->write_to_file(strbuf);
 	sprintf(strbuf, "%s/%s", dir.c_str(), file_prefix.c_str() );
 	sys->save_network_state(strbuf);
 
-	logger->msg("Freeing ...",PROGRESS,true);
-	delete sys;
 
 	if (errcode)
-		env.abort(errcode);
+		mpienv->abort(errcode);
+	logger->msg("Freeing ...",PROGRESS,true);
+	auryn_free();
 	return errcode;
 }

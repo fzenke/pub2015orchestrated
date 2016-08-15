@@ -25,7 +25,7 @@
 
 #define N_EXEC_WEIGHTS 800
 
-using namespace std;
+using namespace auryn;
 
 namespace po = boost::program_options;
 namespace mpi = boost::mpi;
@@ -132,7 +132,7 @@ int main(int ac, char* av[])
             ("wii", po::value<double>(), "recurrent weight (wii)")
             ("wie", po::value<double>(), "recurrent weight (wie)")
             ("extsparse", po::value<double>(), "external sparseness")
-            ("intsparse", po::value<double>(), "external sparseness")
+            ("intsparse", po::value<double>(), "internal sparseness")
             ("simtime", po::value<double>(), "simulation time")
             ("ontime", po::value<double>(), "simulation time")
             ("offtime", po::value<double>(), "simulation time")
@@ -161,7 +161,7 @@ int main(int ac, char* av[])
         po::notify(vm);    
 
         if (vm.count("help")) {
-            cout << desc << "\n";
+			std::cout << desc << "\n";
             return 1;
         }
 
@@ -170,7 +170,7 @@ int main(int ac, char* av[])
         } 
 
         if (vm.count("prefix")) {
-            cout << "simulation prefix " 
+			std::cout << "simulation prefix " 
                  << vm["prefix"].as<string>() << ".\n";
 			file_prefix = vm["prefix"].as<string>();
         } 
@@ -344,27 +344,16 @@ int main(int ac, char* av[])
 			seed = vm["seed"].as<int>();
         } 
     }
-    catch(exception& e) {
-        cerr << "error: " << e.what() << "\n";
+    catch(std::exception& e) {
+		std::cerr << "error: " << e.what() << "\n";
         return 1;
     }
     catch(...) {
-        cerr << "Exception of unknown type!\n";
+		std::cerr << "Exception of unknown type!\n";
     }
 
 
-	// BEGIN Global stuff
-	mpi::environment env(ac, av);
-	mpi::communicator world;
-	communicator = &world;
-
-	sprintf(strbuf, "%s/%s.%d.log", dir.c_str(), file_prefix.c_str(), world.rank());
-	string logfile = strbuf;
-	logger = new Logger(logfile,world.rank());
-
-	sys = new System(&world);
-	// END Global stuff
-
+	auryn_init( ac, av, dir, "sim_rc_p10c", file_prefix );
 	
 	//log params
 	logger->parameter("alpha",alpha);
@@ -415,7 +404,7 @@ int main(int ac, char* av[])
 
 
 	StimulusGroup * stimgroup;
-	sprintf(strbuf, "%s/%s.%d.stimtimes", dir.c_str(), file_prefix.c_str(), world.rank() );
+	sprintf(strbuf, "%s/%s.%d.stimtimes", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	string stimtimefile = strbuf;
 	// stimgroup is initialized here. If stimfile is empty no patterns are loaded
 	// and it acts simply as PoissonGroup
@@ -617,12 +606,12 @@ int main(int ac, char* av[])
 		stimgroup->load_patterns(stimfile.c_str());
 		stimgroup->set_next_action_time(50); // let network settle for some time
 
-		sprintf(strbuf, "%s/%s.%d.s.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
-		SpikeMonitor * smon_s = new SpikeMonitor( stimgroup, string(strbuf), size );
+		sprintf(strbuf, "%s/%s.%d.s.spk", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+		BinarySpikeMonitor * smon_s = new BinarySpikeMonitor( stimgroup, string(strbuf), size );
 
 		// gives the first 3 patterns half of the probability
 		if ( preferred > 0 ) { 
-			vector<double> dist = stimgroup->get_distribution();
+			std::vector<double> dist = stimgroup->get_distribution();
 			int r = preferred;
 			double prob = 0.8;
 			for ( int i = 0 ; i < dist.size() ; ++i ) {
@@ -634,10 +623,108 @@ int main(int ac, char* av[])
 			stimgroup->set_distribution(dist);
 		}
 
-		sprintf(strbuf, "%s/%s.%d.wse", dir.c_str(), file_prefix.c_str(), world.rank() );
+		sprintf(strbuf, "%s/%s.%d.wse", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 		new WeightStatsMonitor( con_stim_e, string(strbuf) );
 	}
 
+
+
+		
+
+	sprintf(strbuf, "%s/%s.%d.sse", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	WeightMonitor * wmon_s = new WeightMonitor( con_stim_e, string(strbuf), 1.0 ); 
+	wmon_s->add_equally_spaced(50);
+	if ( !monfile.empty() ) {
+		sprintf(strbuf, "%s/%s.%d.pact", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+		PatternMonitor * patmon = new PatternMonitor( neurons_e, string(strbuf) , monfile.c_str(), 100);
+
+		if ( !stimfile.empty() ) // 
+			wmon_s->load_pattern_connections(stimfile,monfile,20,20,ASSEMBLIES_ONLY); // true for assemblies only
+		else 
+			wmon_s->load_pattern_connections(monfile,20,20,ASSEMBLIES_ONLY); // true for assemblies only
+	}
+
+
+	// sprintf(strbuf, "%s/%s.%d.sei", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// WeightMonitor * wmon_ei = new WeightMonitor( con_ei2, 0, 100, strbuf, 1.0, DATARANGE); 
+	
+	sprintf(strbuf, "%s/%s.%d.see", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	WeightMonitor * wmon = new WeightMonitor( con_ee, string(strbuf), 1.0); 
+	wmon->add_equally_spaced(50);
+
+	if ( !monfile.empty() ) 
+		wmon->load_pattern_connections(monfile,10,10,ASSEMBLIES_ONLY); // true for assemblies only
+
+	// sprintf(strbuf, "%s/%s.%d.scl", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// StateMonitor * stmon_scl = new StateMonitor( neurons_e, 5, "scaling_weight", string(strbuf), 1 ); 
+
+	// sprintf(strbuf, "%s/%s.%d.scl3k", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// StateMonitor * stmon_scl2 = new StateMonitor( neurons_e, 3000, "scaling_weight", string(strbuf), 1 ); 
+
+	sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	VoltageMonitor * stmon_mem = new VoltageMonitor( neurons_e, 3, string(strbuf) ); 
+	stmon_mem->record_for(10); // stops recording after 10s
+
+	sprintf(strbuf, "%s/%s.%d.imem", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	VoltageMonitor * stmon_imem = new VoltageMonitor( neurons_i2, 3, string(strbuf) ); 
+	stmon_imem->record_for(10); // stops recording after 10s
+
+	// sprintf(strbuf, "%s/%s.%d.si1e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// WeightMonitor * wmon_i1e = new WeightMonitor( con_i1e, string(strbuf) ); 
+	// wmon_i1e->add_equally_spaced(50);
+
+	sprintf(strbuf, "%s/%s.%d.si2e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	WeightMonitor * wmon_i2e = new WeightMonitor( con_i2e, string(strbuf) ); 
+	wmon_i2e->add_equally_spaced(50);
+
+
+	// sprintf(strbuf, "%s/%s.%d.ipe", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// WeightMonitor * wmon_ise = new WeightMonitor( con_se_inh, 0, 100, strbuf, 1.0, DATARANGE); 
+
+	// sprintf(strbuf, "%s/%s.%d.sii", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// WeightMonitor * wmon_ii = new WeightMonitor( con_ii, 0, 100, strbuf, 1.0, DATARANGE); 
+	
+	sprintf(strbuf, "%s/%s.%d.wee", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	new WeightStatsMonitor( con_ee, string(strbuf) );
+
+	sprintf(strbuf, "%s/%s.%d.wi2e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	new WeightStatsMonitor( con_i2e, string(strbuf) );
+
+	if ( !monfile.empty() ) {
+		sprintf(strbuf, "%s/%s.%d.wprec", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+		WeightPatternMonitor * wpmon = new WeightPatternMonitor( con_ee, string(strbuf), 60 );
+		wpmon->load_patterns(monfile);
+	}
+
+	if ( !stimfile.empty() && !monfile.empty() ) {
+		sprintf(strbuf, "%s/%s.%d.wpin", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+		WeightPatternMonitor * wpmon = new WeightPatternMonitor( con_stim_e, string(strbuf), 60 );
+		wpmon->load_pre_patterns(stimfile);
+		wpmon->load_post_patterns(monfile);
+	}
+
+	// sprintf(strbuf, "%s/%s.%d.wi1e", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// new WeightStatsMonitor( con_i1e, string(strbuf) );
+
+
+	// sprintf(strbuf, "%s/%s.%d.wpe", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	// new WeightStatsMonitor( con_se, string(strbuf) );
+
+	sprintf(strbuf, "%s/%s.%d.e.spk", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	BinarySpikeMonitor * smon_e = new BinarySpikeMonitor( neurons_e, string(strbuf), size );
+
+
+	sprintf(strbuf, "%s/%s.%d.i2.spk", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	BinarySpikeMonitor * smon_i2 = new BinarySpikeMonitor( neurons_i2, string(strbuf), size );
+
+	sprintf(strbuf, "%s/%s.%d.e.prate", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	PopulationRateMonitor * pmon_e = new PopulationRateMonitor( neurons_e, string(strbuf), 0.1 );
+
+
+	sprintf(strbuf, "%s/%s.%d.i2.prate", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	PopulationRateMonitor * pmon_i2 = new PopulationRateMonitor( neurons_i2, string(strbuf), 0.1 );
+
+	RateChecker * chk = new RateChecker( neurons_e , -1 , 20. , 0.1);
 
 	// load if necessary
 	if (!infilename.empty()) {
@@ -647,8 +734,6 @@ int main(int ac, char* av[])
 		// auryn_vector_float_set_all( foo, 5.0 );
 	}
 
-
-		
 	if ( !prefile.empty() && chi > 0.0 ) {
 		con_ee->patterns_ignore_gamma = true;
 		con_ee->load_patterns(prefile,chi,false);
@@ -669,101 +754,6 @@ int main(int ac, char* av[])
 		if ( consolidate_initial_weights )
 			con_stim_e->consolidate();
 	}
-
-	sprintf(strbuf, "%s/%s.%d.sse", dir.c_str(), file_prefix.c_str(), world.rank() );
-	WeightMonitor * wmon_s = new WeightMonitor( con_stim_e, string(strbuf), 1.0 ); 
-	wmon_s->add_equally_spaced(50);
-	if ( !monfile.empty() ) {
-		sprintf(strbuf, "%s/%s.%d.pact", dir.c_str(), file_prefix.c_str(), world.rank() );
-		PatternMonitor * patmon = new PatternMonitor( neurons_e, string(strbuf) , monfile.c_str(), 100);
-
-		if ( !stimfile.empty() ) // 
-			wmon_s->load_pattern_connections(stimfile,monfile,20,20,ASSEMBLIES_ONLY); // true for assemblies only
-		else 
-			wmon_s->load_pattern_connections(monfile,20,20,ASSEMBLIES_ONLY); // true for assemblies only
-	}
-
-
-	// sprintf(strbuf, "%s/%s.%d.sei", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// WeightMonitor * wmon_ei = new WeightMonitor( con_ei2, 0, 100, strbuf, 1.0, DATARANGE); 
-	
-	sprintf(strbuf, "%s/%s.%d.see", dir.c_str(), file_prefix.c_str(), world.rank() );
-	WeightMonitor * wmon = new WeightMonitor( con_ee, string(strbuf), 1.0); 
-	wmon->add_equally_spaced(50);
-
-	if ( !monfile.empty() ) 
-		wmon->load_pattern_connections(monfile,10,10,ASSEMBLIES_ONLY); // true for assemblies only
-
-	// sprintf(strbuf, "%s/%s.%d.scl", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// StateMonitor * stmon_scl = new StateMonitor( neurons_e, 5, "scaling_weight", string(strbuf), 1 ); 
-
-	// sprintf(strbuf, "%s/%s.%d.scl3k", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// StateMonitor * stmon_scl2 = new StateMonitor( neurons_e, 3000, "scaling_weight", string(strbuf), 1 ); 
-
-	sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), world.rank() );
-	VoltageMonitor * stmon_mem = new VoltageMonitor( neurons_e, 3, string(strbuf) ); 
-	stmon_mem->tStop = 10/dt; // stops recording after 10s
-
-	sprintf(strbuf, "%s/%s.%d.imem", dir.c_str(), file_prefix.c_str(), world.rank() );
-	VoltageMonitor * stmon_imem = new VoltageMonitor( neurons_i2, 3, string(strbuf) ); 
-	stmon_imem->tStop = 10/dt; // stops recording after 10s
-
-	// sprintf(strbuf, "%s/%s.%d.si1e", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// WeightMonitor * wmon_i1e = new WeightMonitor( con_i1e, string(strbuf) ); 
-	// wmon_i1e->add_equally_spaced(50);
-
-	sprintf(strbuf, "%s/%s.%d.si2e", dir.c_str(), file_prefix.c_str(), world.rank() );
-	WeightMonitor * wmon_i2e = new WeightMonitor( con_i2e, string(strbuf) ); 
-	wmon_i2e->add_equally_spaced(50);
-
-
-	// sprintf(strbuf, "%s/%s.%d.ipe", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// WeightMonitor * wmon_ise = new WeightMonitor( con_se_inh, 0, 100, strbuf, 1.0, DATARANGE); 
-
-	// sprintf(strbuf, "%s/%s.%d.sii", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// WeightMonitor * wmon_ii = new WeightMonitor( con_ii, 0, 100, strbuf, 1.0, DATARANGE); 
-	
-	sprintf(strbuf, "%s/%s.%d.wee", dir.c_str(), file_prefix.c_str(), world.rank() );
-	new WeightStatsMonitor( con_ee, string(strbuf) );
-
-	sprintf(strbuf, "%s/%s.%d.wi2e", dir.c_str(), file_prefix.c_str(), world.rank() );
-	new WeightStatsMonitor( con_i2e, string(strbuf) );
-
-	if ( !monfile.empty() ) {
-		sprintf(strbuf, "%s/%s.%d.wprec", dir.c_str(), file_prefix.c_str(), world.rank() );
-		WeightPatternMonitor * wpmon = new WeightPatternMonitor( con_ee, string(strbuf), 60 );
-		wpmon->load_patterns(monfile);
-	}
-
-	if ( !stimfile.empty() && !monfile.empty() ) {
-		sprintf(strbuf, "%s/%s.%d.wpin", dir.c_str(), file_prefix.c_str(), world.rank() );
-		WeightPatternMonitor * wpmon = new WeightPatternMonitor( con_stim_e, string(strbuf), 60 );
-		wpmon->load_pre_patterns(stimfile);
-		wpmon->load_post_patterns(monfile);
-	}
-
-	// sprintf(strbuf, "%s/%s.%d.wi1e", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// new WeightStatsMonitor( con_i1e, string(strbuf) );
-
-
-	// sprintf(strbuf, "%s/%s.%d.wpe", dir.c_str(), file_prefix.c_str(), world.rank() );
-	// new WeightStatsMonitor( con_se, string(strbuf) );
-
-	sprintf(strbuf, "%s/%s.%d.e.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
-	SpikeMonitor * smon_e = new SpikeMonitor( neurons_e, string(strbuf), size );
-
-
-	sprintf(strbuf, "%s/%s.%d.i2.ras", dir.c_str(), file_prefix.c_str(), world.rank() );
-	SpikeMonitor * smon_i2 = new SpikeMonitor( neurons_i2, string(strbuf), size );
-
-	sprintf(strbuf, "%s/%s.%d.e.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
-	PopulationRateMonitor * pmon_e = new PopulationRateMonitor( neurons_e, string(strbuf), 0.1 );
-
-
-	sprintf(strbuf, "%s/%s.%d.i2.prate", dir.c_str(), file_prefix.c_str(), world.rank() );
-	PopulationRateMonitor * pmon_i2 = new PopulationRateMonitor( neurons_i2, string(strbuf), 0.1 );
-
-	RateChecker * chk = new RateChecker( neurons_e , -1 , 20. , 0.1);
 
 
 	// prime
@@ -799,16 +789,22 @@ int main(int ac, char* av[])
 			errcode = 1;
 
 	if ( save ) {
-		sprintf(strbuf, "%s/%s", dir.c_str(), file_prefix.c_str() );
-		sys->save_network_state(string(strbuf));
+		sys->set_output_dir(dir);
+		sys->save_network_state(file_prefix);
 	}
 
+	sprintf(strbuf, "%s/%s.%d.ee.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	con_ee->write_to_file(strbuf);
+
+	sprintf(strbuf, "%s/%s.%d.ext.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	con_stim_e->write_to_file(strbuf);
+
+
+	if (errcode) auryn_abort(errcode);
+
 	logger->msg("Freeing ...",PROGRESS,true);
-	delete sys;
+	auryn_free();
 
-	if (errcode)
-		env.abort(errcode);
 	return errcode;
-
 }
 

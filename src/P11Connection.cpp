@@ -20,6 +20,8 @@
 
 #include "P11Connection.h"
 
+using namespace auryn;
+
 void P11Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 {
 	set_name("P11Connection");
@@ -97,10 +99,8 @@ void P11Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 
 	}
 
-	// registering the right amount of spike attributes
-	// this line is very important finding bugs due to 
-	// this being wrong or missing is hard 
-	src->set_num_spike_attributes(1);
+	// Registering the right number of spike attributes
+	add_number_of_spike_attributes(1);
 }
 
 void P11Connection::finalize() 
@@ -182,7 +182,7 @@ inline AurynWeight P11Connection::dw_pre(const NeuronID post, const AurynWeight 
 	mul *= 2; // stability of lower FP very dependent on this param
 
 	// cout << mul << endl;
-	mul = min(1.0,mul);  
+	mul = std::min(1.0,mul);  
 	// mul = 1.0; // disable
 	AurynDouble dw = A2_minus*( (tr_post->get(post))*mul ) - delta;
 
@@ -200,25 +200,28 @@ inline AurynWeight P11Connection::dw_post(const NeuronID pre, const NeuronID pos
 
 void P11Connection::propagate_forward()
 {
+	// loop over spikes
+	for (int i = 0 ; i < src->get_spikes()->size() ; ++i ) {
+		// get spike at pos i in SpikeContainer
+		NeuronID spike = src->get_spikes()->at(i);
 
-	SpikeContainer::const_iterator spikes_end = src->get_spikes()->end();
-	AttributeContainer::const_iterator attr = src->get_attributes()->begin();
-	// process spikes
-	for (SpikeContainer::const_iterator spike = src->get_spikes()->begin() ; // spike = pre_spike
-			spike != spikes_end ; ++spike ) {
-		for (NeuronID * c = w->get_row_begin(*spike) ; c != w->get_row_end(*spike) ; ++c ) { // c = post index
-			AurynWeight value = fwd_data[c-fwd_ind] * *attr; 
-			NeuronID translated_spike = dst->global2rank(*c); // only to be used for post traces
+		// extract spike attribute from attribute stack;
+		AurynFloat attribute = get_spike_attribute(i);
+
+		// loop over postsynaptic targets
+		for (NeuronID * c = w->get_row_begin(spike) ; 
+				c != w->get_row_end(spike) ; 
+				++c ) {
+			AurynWeight value = fwd_data[c-fwd_ind] * attribute; 
 			transmit( *c , value );
 			if ( stdp_active ) {
+			  NeuronID translated_spike = dst->global2rank(*c); // only to be used for post traces
 			  fwd_data[c-fwd_ind] -= dw_pre(translated_spike,&fwd_data[c-fwd_ind]);
 			  if ( fwd_data[c-fwd_ind] < 0 ) 
 				fwd_data[c-fwd_ind] = 0.;
 			}
 		}
-		++attr;
 	}
-
 }
 
 void P11Connection::propagate_backward()
@@ -363,17 +366,17 @@ void P11Connection::set_beta(AurynFloat b)
 bool P11Connection::write_to_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::write_to_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ofstream outfile;
-	outfile.open(oss.str().c_str(),ios::out);
+	std::ofstream outfile;
+	outfile.open(oss.str().c_str(),std::ios::out);
 	if (!outfile) {
-	  cerr << "Can't open output file " << filename << endl;
+		std::cerr << "Can't open output file " << filename << std::endl;
 	  throw AurynOpenFileException();
 	}
 
@@ -391,16 +394,16 @@ bool P11Connection::write_to_file(string filename)
 bool P11Connection::load_from_file(string filename)
 {
 
-	stringstream oss;
+	std::stringstream oss;
 	oss << filename << "2";
 
 	SparseConnection::load_from_file(w_solid_matrix,oss.str());
 
 	oss.str("");
 	oss << filename << ".cstate";
-	ifstream infile (oss.str().c_str());
+	std::ifstream infile (oss.str().c_str());
 	if (!infile) {
-		stringstream oes;
+		std::stringstream oes;
 		oes << "Can't open input file " << filename;
 		logger->msg(oes.str(),ERROR);
 		throw AurynOpenFileException();

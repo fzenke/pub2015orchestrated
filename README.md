@@ -1,11 +1,13 @@
-# Auryn classes and simulations to reproduce on-line learning with orchestrated plasticity rules.
+# On-line learning with orchestrated plasticity rules
 
-These simulations are to reproduce the findings from Zenke, F., Agnes, E.J., and Gerstner, W. (2015). 
-Diverse synaptic plasticity mechanisms orchestrated to form and retrieve memories in spiking neural networks. Nat Commun 6. 
+These simulations are to reproduce the findings from 
+Zenke, F., Agnes, E.J., and Gerstner, W. (2015). Diverse synaptic plasticity mechanisms orchestrated to form and retrieve memories in spiking neural networks. Nat Commun 6.
 http://www.nature.com/ncomms/2015/150421/ncomms7922/full/ncomms7922.html
 
-A similiar version to this document is available at
-https://www.fzenke.net/auryn/doku.php?id=examples:orchestrated_plasticity
+This is the development branch to run with Auryn > v0.7.  
+Tested with Auryn develop branch commit
+7d834eb6d2be03a411031d4e12a876f44227109f
+
 
 ## Auryn classes
 ```
@@ -24,15 +26,19 @@ P12Connection
 
 ## Running an example
 
-To run the orchestrated plasticity simulation as described in Figure 3 of you
-need to install and compile Auryn v0.5 (the develop branch of this repository 
-might be tracking more recent versions of Auryn). 
+This simulation reproduces the key results from the orchestrated plasticity
+simulation as described in Figure 3 you need to install and compile Auryn
+(commit 7d834eb6) Note, that due to ongoing development of the simulator and
+specifically changes to the random seeding of SparseConnections since v0.4.1
+the network you are simulating is not identical at the individual connection
+level to the simulation shown in the paper. To replicate the original
+simulation bit-by-bit please refer to the commit history of this repository and
+the simulator.
+
 In the following we will assume that you have git installed and up and running
 on your system. Moreover, you have all dependencies to compile Auryn installed.
 
-### Download and compile Auryn 
-
-In essence do the following:
+To download and compile Auryn do the following:
 ```
 $ cd ~
 $ git clone https://github.com/fzenke/auryn.git
@@ -43,21 +49,21 @@ $ make
 Should you have difficulties compiling the simulator please refer to the
 installation and troubleshooting section in the manual (www.fzenke.net/auryn).
 
-### Compile simulation classes and programs
+Now go to the installation directory of the simulation code (when you are
+reading this, chances are you are already in this directory) and run make there
+(you might have to update the auryn path in the Makefile if you are using a
+different install directory). This will build the necessary Auryn libraries
+that implement plasticity and the simulation libraries. The binary file
+sim_rc_p10c is the downstream file of the simulation behind Figure 3 in Zenke,
+F., Agnes, E.J., Gerstner, W., 2015. Diverse synaptic plasticity mechanisms
+orchestrated to form and retrieve memories in spiking neural networks. Nature
+Communications.
 
-Now go to the installation directory of the `src/` simulation code (when you are
-reading this, chances are you are already in this directory). And run `make`
-there. This should build the necessary Auryn libraries that implement plasticity
-and the simulation libraries. For instance the simulation program `sim_rc_p10c` is the
-one behind Figure 3 in Zenke, F., Agnes, E.J., Gerstner, W., (2015).
+Finally, update the output path in 'globalvars.sh' to point to a portion of
+disk with sufficient space. If you want to run distributed simulations make
+sure this path is accessible from all nodes of your cluster.
 
-Finally update the output path in globalvars.sh to point to a portion of disk
-with sufficient space. If you want to run distributed simulations make sure this
-path is accessible from all nodes of your cluster.
-
-### Run simulation script
-Invoking
-`$ ./run_orchestrated_stdp.sh`
-will run the the three scripts 1run_init.sh, 2run_learn.sh and 3run_cued.sh in
-sequence which corresponds to the two-fold learning and recall protocol shown in
-Figure 3.
+Invoking `$ ./run_orchestrated_stdp.sh`
+will run the three scripts 1run_init.sh, 2run_learn.sh and 3run_cued.sh and
+the necessary bootstrap script in sequence which corresponds to the two-fold
+learning and recall protocol shown in Figure 3.

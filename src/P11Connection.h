@@ -21,16 +21,12 @@
 #ifndef P11CONNECTION_H_
 #define P11CONNECTION_H_
 
-#include "auryn_definitions.h"
-#include "DuplexConnection.h"
-#include "EulerTrace.h"
-#include "LinearTrace.h"
+#include "auryn.h"
 
 #define P11DECAYTERM_H 4.0
 #define P11CONNECTION_EULERUPGRADE_STEP 0.99
 
-using namespace std;
-
+namespace auryn {
 
 class P11Connection : public DuplexConnection
 {
@@ -113,8 +109,6 @@ protected:
     }
 
 
-
-
 public:
 	AurynFloat A3_plus;
 	AurynFloat A2_plus;
@@ -180,5 +174,7 @@ public:
 	virtual bool write_to_file(string filename);
 
 };
+
+}
 
 #endif /*P11CONNECTION_H_*/

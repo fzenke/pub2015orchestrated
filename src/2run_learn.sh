@@ -2,7 +2,7 @@
 
 . ./globalvars.sh
 
-make -C $DIR -j8 $BIN && mpirun -n 4 $DIR/$BIN \
+make -C $DIR -j8 $BIN && mpirun -n $NP $DIR/$BIN \
 	--dir $OUTDIR \
 	--load $OUTDIR/rf1 \
 	--prefix rf2 --size 4096 --save \

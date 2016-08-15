@@ -21,16 +21,11 @@
 #ifndef GLOBALPFCONNECTION_H_
 #define GLOBALPFCONNECTION_H_
 
-#include "auryn_definitions.h"
-#include "DuplexConnection.h"
-#include "EulerTrace.h"
-#include "LinearTrace.h"
-#include "SpikeDelay.h"
+#include "auryn.h"
 
 #define TRACE EulerTrace
 
-using namespace std;
-
+namespace auryn {
 
 class GlobalPFConnection : public DuplexConnection
 {
@@ -131,5 +126,7 @@ public:
 	virtual bool write_to_file(string filename);
 
 };
+
+}
 
 #endif /*GLOBALPFCONNECTION_H_*/

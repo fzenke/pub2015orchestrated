@@ -21,16 +21,12 @@
 #ifndef P10CONNECTION_H_
 #define P10CONNECTION_H_
 
-#include "auryn_definitions.h"
-#include "DuplexConnection.h"
-#include "EulerTrace.h"
-#include "LinearTrace.h"
+#include "auryn.h"
 
 #define P10DECAYTERM_H 4.0
 #define P10CONNECTION_EULERUPGRADE_STEP 0.99
 
-using namespace std;
-
+namespace auryn {
 
 class P10Connection : public DuplexConnection
 {
@@ -110,8 +106,6 @@ protected:
     }
 
 
-
-
 public:
 	AurynFloat A3_plus;
 	AurynFloat A2_plus;
@@ -179,5 +173,7 @@ public:
 	void randomize_consolidation_variables(AurynFloat mean, AurynFloat std);
 
 };
+
+}
 
 #endif /*P10CONNECTION_H_*/
