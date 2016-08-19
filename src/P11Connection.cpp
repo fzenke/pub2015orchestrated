@@ -32,8 +32,8 @@ void P11Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 	tau_long  = 100e-3;
 
 	tau_consolidation = 1200;
-	timestep_consolidation = 1e-3*tau_consolidation/dt;
-	delta_consolidation = 1.0*timestep_consolidation/tau_consolidation*dt;;
+	timestep_consolidation = 1e-3*tau_consolidation/auryn_timestep;
+	delta_consolidation = 1.0*timestep_consolidation/tau_consolidation*auryn_timestep;;
 	logger->parameter("timestep_consolidation",(int)timestep_consolidation);
 
 
@@ -56,7 +56,7 @@ void P11Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 	// dst->randomize_state_vector_gauss("P11hom_vector",0.1,0.5);
 	auryn_vector_float_clip(hom,0.1,100);
 	auryn_vector_float_set_all(hom,0.5);
-	delta_hom = dt/tau_hom;
+	delta_hom = auryn_timestep/tau_hom;
 
 	if ( dst->get_post_size() ) {
 		tr_pre = src->get_pre_trace(tau_plus);
@@ -268,12 +268,12 @@ void P11Connection::evolve()
 		// dynamics of x
 		auryn_vector_float_set_all( state_temp, 1);
 		auryn_vector_float_saxpy(-1,state_x,state_temp);
-		auryn_vector_float_saxpy(dt/tau_d,state_temp,state_x);
+		auryn_vector_float_saxpy(auryn_timestep/tau_d,state_temp,state_x);
 
 		// dynamics of u
 		auryn_vector_float_set_all( state_temp, Urest);
 		auryn_vector_float_saxpy(-1,state_u,state_temp);
-		auryn_vector_float_saxpy(dt/tau_f,state_temp,state_u);
+		auryn_vector_float_saxpy(auryn_timestep/tau_f,state_temp,state_u);
 
 	}
 
@@ -291,7 +291,7 @@ void P11Connection::evolve()
 	auryn_vector_float_copy(  tr_post2->get_state_ptr(), state_temp );
 	auryn_vector_float_mul(  state_temp, tr_post2->get_state_ptr() );
 	auryn_vector_float_saxpy( -1.0, hom, state_temp );
-	auryn_vector_float_saxpy( dt/tau_hom, state_temp, hom );
+	auryn_vector_float_saxpy( auryn_timestep/tau_hom, state_temp, hom );
 
 	// if ( sys->get_clock()%10000==0 ) {
 	// 	for ( int i = 0 ; i < 100 ; ++i )
@@ -439,5 +439,5 @@ void P11Connection::load_fragile_matrix(string filename)
 void P11Connection::set_tau_hom(AurynFloat tau)
 {
 	tau_hom = tau;
-	delta_hom = dt/tau_hom;
+	delta_hom = auryn_timestep/tau_hom;
 }

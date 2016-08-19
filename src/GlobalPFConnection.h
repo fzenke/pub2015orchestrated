@@ -23,7 +23,6 @@
 
 #include "auryn.h"
 
-#define TRACE EulerTrace
 
 namespace auryn {
 
@@ -54,8 +53,8 @@ protected:
 
 	AurynDouble target_rate;
 
-	PRE_TRACE_MODEL * tr_pre;
-	DEFAULT_TRACE_MODEL * tr_post;
+	Trace * tr_pre;
+	Trace * tr_post;
 
 	inline AurynWeight dw_pre(NeuronID post);
 	inline AurynWeight dw_post(NeuronID pre);

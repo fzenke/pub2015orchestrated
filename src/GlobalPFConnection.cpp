@@ -27,7 +27,7 @@ void GlobalPFConnection::init(AurynFloat tau_hom, AurynFloat eta, AurynFloat kap
 	if ( dst->get_post_size() == 0 ) return;
 
 	tau_post = tau_hom;
-	post_factor_mul = exp(-dt/tau_post);
+	post_factor_mul = exp(-auryn_timestep/tau_post);
 
 	target_rate = kappa;
 	expected_spikes = kappa*dst->get_size();

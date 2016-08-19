@@ -38,7 +38,7 @@ private:
 	auryn_vector_float * state_temp;
 
 
-	EulerTrace * mem_lp;
+	Trace * mem_lp;
 
 
 	double tau_d;
@@ -116,9 +116,9 @@ public:
 	AurynFloat delta;
 	AurynFloat pot_strength;
 
-	PRE_TRACE_MODEL * tr_pre;
-	DEFAULT_TRACE_MODEL * tr_post;
-	DEFAULT_TRACE_MODEL * tr_post2;
+	Trace * tr_pre;
+	Trace * tr_post;
+	Trace * tr_post2;
 
 	inline AurynWeight dw_pre(const NeuronID post, const AurynWeight * w);
 	inline AurynWeight dw_post(const NeuronID pre, const NeuronID post, const AurynWeight * w, const AurynWeight w0);
