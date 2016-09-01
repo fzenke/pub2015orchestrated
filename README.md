@@ -33,17 +33,11 @@ level to the simulation shown in the paper. To replicate the original
 simulation bit-by-bit please refer to the commit history of this repository and
 the simulator.
 
+First, download and compile Auryn (see https://github.com/fzenke/auryn for
+instructions).
+
 In the following we will assume that you have git installed and up and running
 on your system. Moreover, you have all dependencies to compile Auryn installed.
-
-To download and compile Auryn do the following:
-```
-$ cd ~
-$ git clone https://github.com/fzenke/auryn.git
-$ cd auryn/build/home
-$ make
-```
-
 Should you have difficulties compiling the simulator please refer to the
 installation and troubleshooting section in the manual (www.fzenke.net/auryn).
 
