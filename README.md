@@ -25,21 +25,19 @@ P12Connection
 ## Running an example
 
 This simulation reproduces the key results from the orchestrated plasticity
-simulation as described in Figure 3 you need to install and compile Auryn
-(commit 7d834eb6) Note, that due to ongoing development of the simulator and
-specifically changes to the random seeding of SparseConnections since v0.4.1
-the network you are simulating is not identical at the individual connection
-level to the simulation shown in the paper. To replicate the original
-simulation bit-by-bit please refer to the commit history of this repository and
-the simulator.
-
-First, download and compile Auryn (see https://github.com/fzenke/auryn for
-instructions).
+simulation as described in Figure 3 you need to install and compile Auryn.
+Note, that due to ongoing development of the simulator and specifically changes
+to the random seeding of SparseConnections since v0.4.1 the network you are
+simulating is not identical at the individual connection level to the
+simulation shown in the paper. To replicate the original simulation bit-by-bit
+please refer to the commit history of this repository and the simulator.
 
 In the following we will assume that you have git installed and up and running
 on your system. Moreover, you have all dependencies to compile Auryn installed.
-Should you have difficulties compiling the simulator please refer to the
-installation and troubleshooting section in the manual (www.fzenke.net/auryn).
+First, download and compile Auryn (see https://github.com/fzenke/auryn for
+instructions).  Should you have difficulties compiling the simulator please
+refer to the installation and troubleshooting section in the manual
+(www.fzenke.net/auryn).
 
 Now go to the installation directory of the simulation code (when you are
 reading this, chances are you are already in this directory) and run make there
