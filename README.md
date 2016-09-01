@@ -4,9 +4,7 @@ These simulations are to reproduce the findings from
 Zenke, F., Agnes, E.J., and Gerstner, W. (2015). Diverse synaptic plasticity mechanisms orchestrated to form and retrieve memories in spiking neural networks. Nat Commun 6.
 http://www.nature.com/ncomms/2015/150421/ncomms7922/full/ncomms7922.html
 
-This is the development branch to run with Auryn > v0.7.  
-Tested with Auryn develop branch commit
-7d834eb6d2be03a411031d4e12a876f44227109f
+This development version was last tested with Auryn v0.8.0-beta3.  
 
 
 ## Auryn classes
