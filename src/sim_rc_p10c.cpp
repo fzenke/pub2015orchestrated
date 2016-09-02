@@ -354,6 +354,7 @@ int main(int ac, char* av[])
 
 
 	auryn_init( ac, av, dir, "sim_rc_p10c", file_prefix );
+	sys->set_master_seed(42);
 	
 	//log params
 	logger->parameter("alpha",alpha);
