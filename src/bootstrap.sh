@@ -7,8 +7,8 @@
 . ./globalvars.sh
 
 # Leave unchanged in most cases
-T_START=3000
-T_STOP=3500
+T_START=1400
+T_STOP=1800
 
 echo "Testing if aube is in users path"
 path_to_aube=$(which aube)
