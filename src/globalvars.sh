@@ -4,8 +4,8 @@ OUTDIR="$HOME/data/sim2"
 RECFILE="./data/rf_discsR8.mtx"
 
 DIR="."
-BIN="sim_rc_p10c"
-# BIN="sim_rc_p11"
+# BIN="sim_rc_p10c"
+BIN="sim_rc_p11"
 NP=4
 BETA="0.05"
 ETA="1e-3"
