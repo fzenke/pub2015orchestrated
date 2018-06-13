@@ -24,7 +24,7 @@ This development version was last tested with Auryn v0.8.1-dev (commit
 94892708c3).  
 
 
-## Auryn classes
+## Included Auryn classes
 
 ```
 P10Connection 
@@ -69,3 +69,9 @@ The simulation file `sim_rc_p10c` is the downstream version of the simulation
 behind Figure 3 in our paper.  The simulation `sim_rc_p11` is a version with a
 homeostatic sliding threshold. The current default  is to run the homeostatic
 one, but this can be changed easily in `globalvars.sh`. 
+
+
+## Example analysis
+
+You will find some example analysis files (including a Jupyter notebook) in the
+`ana` subdirectory.
