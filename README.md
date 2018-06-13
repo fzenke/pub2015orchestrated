@@ -3,7 +3,7 @@
 This repository contains example  simulations which reproduce the key results
 from our paper as described in Figure 3:
 
-```bibtex
+```
 Zenke, F., Agnes, E.J., and Gerstner, W. (2015). Diverse synaptic plasticity
 mechanisms orchestrated to form and retrieve memories in spiking neural
 networks. Nat Commun 6.
