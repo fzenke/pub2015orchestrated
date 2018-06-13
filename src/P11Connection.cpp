@@ -50,13 +50,13 @@ void P11Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 	set_beta(1e-1);
 
 
-	tau_hom = 1200 ; 
-	hom = dst->get_state_vector("P11hom_vector");
+	tau_hom = 100.0 ;  // TODO set back to 1200 after tuning
+	target_rate = kappa;
+	hom = dst->get_post_trace(tau_hom);
+	hom->set_all(1.0*tau_hom);
 	// auryn_vector_float_set_all(hom,1.0); // initialize threshold at some value
 	// dst->randomize_state_vector_gauss("P11hom_vector",0.1,0.5);
-	auryn_vector_float_clip(hom,0.1,100);
-	auryn_vector_float_set_all(hom,0.5);
-	delta_hom = auryn_timestep/tau_hom;
+	// delta_hom = auryn_timestep/tau_hom;
 
 	if ( dst->get_post_size() ) {
 		tr_pre = src->get_pre_trace(tau_plus);
@@ -178,13 +178,9 @@ P11Connection::~P11Connection()
 
 inline AurynWeight P11Connection::dw_pre(const NeuronID post, const AurynWeight * w)
 {
-	AurynDouble mul = auryn_vector_float_get(hom,post);
-	mul *= 2; // stability of lower FP very dependent on this param
+	const AurynDouble mul = std::pow(hom->normalized_get(post)/target_rate,2);
 
-	// cout << mul << endl;
-	mul = std::min(1.0,mul);  
-	// mul = 1.0; // disable
-	AurynDouble dw = A2_minus*( (tr_post->get(post))*mul ) - delta;
+	AurynDouble dw = -A2_minus*( (tr_post->get(post))*mul ) + delta;
 
 	return dw;
 }
@@ -216,7 +212,7 @@ void P11Connection::propagate_forward()
 			transmit( *c , value );
 			if ( stdp_active ) {
 			  NeuronID translated_spike = dst->global2rank(*c); // only to be used for post traces
-			  fwd_data[c-fwd_ind] -= dw_pre(translated_spike,&fwd_data[c-fwd_ind]);
+			  fwd_data[c-fwd_ind] += dw_pre(translated_spike,&fwd_data[c-fwd_ind]);
 			  if ( fwd_data[c-fwd_ind] < 0 ) 
 				fwd_data[c-fwd_ind] = 0.;
 			}
@@ -263,7 +259,6 @@ void P11Connection::propagate()
 void P11Connection::evolve()
 {
 	if ( src->evolve_locally() ) {
-		// homeostasis dynamics
 
 		// dynamics of x
 		auryn_vector_float_set_all( state_temp, 1);
@@ -288,10 +283,10 @@ void P11Connection::evolve()
 	}
 
 	// compute homeostatic threshold shift
-	auryn_vector_float_copy(  tr_post2->get_state_ptr(), state_temp );
-	auryn_vector_float_mul(  state_temp, tr_post2->get_state_ptr() );
-	auryn_vector_float_saxpy( -1.0, hom, state_temp );
-	auryn_vector_float_saxpy( auryn_timestep/tau_hom, state_temp, hom );
+	// auryn_vector_float_copy(  tr_post2->get_state_ptr(), state_temp );
+	// auryn_vector_float_mul(  state_temp, tr_post2->get_state_ptr() );
+	// auryn_vector_float_saxpy( -1.0, hom, state_temp );
+	// auryn_vector_float_saxpy( auryn_timestep/tau_hom, state_temp, hom );
 
 	// if ( sys->get_clock()%10000==0 ) {
 	// 	for ( int i = 0 ; i < 100 ; ++i )
@@ -432,6 +427,8 @@ void P11Connection::load_fragile_matrix(string filename)
 	w_solid_matrix->resize_buffer_and_clear(w->get_nonzero());
 	// copy element positions
 	w_solid_matrix->copy(w);
+	// this replaces finalize
+	w_solid_matrix->fill_zeros();
 	// set all elements to the lower fixed point
 	w_solid_matrix->set_all(weight_a);
 }
@@ -439,5 +436,5 @@ void P11Connection::load_fragile_matrix(string filename)
 void P11Connection::set_tau_hom(AurynFloat tau)
 {
 	tau_hom = tau;
-	delta_hom = auryn_timestep/tau_hom;
+	hom->set_timeconstant(tau_hom);
 }

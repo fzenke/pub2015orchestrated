@@ -51,7 +51,6 @@ int main(int ac, char* av[])
 	bool consolidate_initial_weights = false;
 	bool quiet = false;
 
-	NeuronID stimsize = 4096;
 	NeuronID size = 4096;
 	NeuronID seed = 1;
 	double alpha = 3;
@@ -61,7 +60,7 @@ int main(int ac, char* av[])
 	double taud = 200e-3;
 	double eta = 1e-3;
 
-	double tauh = 3600;
+	double tauh = 600.0;
 
 	double beta = 5.0e-2;
 	double delta = 2.0e-2;
@@ -78,7 +77,7 @@ int main(int ac, char* av[])
 
 	double wmax = 5.0;
 	double wmin = 0.0;
-	double wmaxi = 1.0;
+	double wmaxi = 5.0;
 	double wmini = 0.0;
 
 	double bgrate = 10.0;
@@ -100,7 +99,7 @@ int main(int ac, char* av[])
 	AurynWeight chi = 1.0;
 	AurynWeight xi = 0.5;
 
-	double sparseness = 0.2;
+	double sparseness = 0.1;
 	double sparseness_ext = 0.05;
 	double wext = 0.2;
 	
@@ -443,7 +442,9 @@ int main(int ac, char* av[])
     }
 
 
-	auryn_init( ac, av, dir );
+	auryn_init( ac, av, dir, "sim_rc_p11", file_prefix );
+	sys->set_master_seed(42);
+	logger->set_logfile_loglevel(VERBOSE);
 	
 	//log params
 	logger->parameter("alpha",alpha);
@@ -500,13 +501,15 @@ int main(int ac, char* av[])
 	string stimtimefile = strbuf;
 	// stimgroup is initialized here. If stimfile is empty no patterns are loaded
 	// and it acts simply as PoissonGroup
-	stimgroup = new StimulusGroup(stimsize,stimtimefile);
+	stimgroup = new StimulusGroup(size,stimtimefile);
 	stimgroup->set_mean_on_period(ontime);
 	stimgroup->set_mean_off_period(offtime);
 	stimgroup->binary_patterns = true;
 	stimgroup->scale = scale;
 	stimgroup->background_rate = bgrate;
 	stimgroup->background_during_stimulus = true;
+	// stimgroup->randomintensities = true;
+	if (seed!=1) stimgroup->seed(seed);
 
 
 
@@ -540,7 +543,7 @@ int main(int ac, char* av[])
 	con_ee->set_tau_d(taud);
 	con_ee->set_tau_f(tauf);
 	con_ee->set_ujump(ujump);
-	con_ee->set_urest(ujump);
+	// con_ee->set_urest(ujump);
 	con_ee->set_beta(beta);
 	con_ee->delta = raw_delta*eta;
 	con_ee->set_min_weight(wmin);
@@ -560,7 +563,7 @@ int main(int ac, char* av[])
 	con_ei2->set_tau_d(taud);
 	con_ei2->set_tau_f(0.6);
 	con_ei2->set_ujump(0.2);
-	con_ei2->set_urest(0.2);
+	// con_ei2->set_urest(0.2);
 
 	// P11Connection * con_ei2 = NULL;
 	// con_ei2 = new P11Connection( neurons_e, neurons_i2,
@@ -615,19 +618,15 @@ int main(int ac, char* av[])
 	con_i2e = new GlobalPFConnection(neurons_i2,neurons_e,
 			wie,sparseness,
 			10.0,
-			eta/50, 
+			eta/50,
 			alpha, 
-			wmax,
+			wmaxi,
 			GABA
 			);
 	con_i2e->set_name("I2E");
-	con_i2e->set_min_weight(wmini);
 	// con_i2e->set_eta(geta);
 	// con_i2e->rate_target = alpha;
 	// con_i2e->rate_estimate = alpha;
-	// con_i2e->random_data(wie,wie);
-
-	
 	// con_i2e->random_data(wie,wie);
 
 	if ( inh_input ) {
@@ -640,7 +639,7 @@ int main(int ac, char* av[])
 		con_stim_i->set_tau_d(taud);
 		con_stim_i->set_tau_f(0.6);
 		con_stim_i->set_ujump(0.2);
-		con_stim_i->set_urest(0.2);
+		// con_stim_i->set_urest(0.2);
 	}
 
 	// External input
@@ -653,13 +652,13 @@ int main(int ac, char* av[])
 		GLUT
 		);
 
+
 	con_stim_e->set_weight_a(weight_a);
 	con_stim_e->set_weight_c(weight_c);
-	// con_stim_e->sparse_set_data(0.1,1.0);
 	con_stim_e->set_tau_d(taud);
 	con_stim_e->set_tau_f(tauf);
 	con_stim_e->set_ujump(ujump);
-	con_stim_e->set_urest(ujump);
+	// con_stim_e->set_urest(ujump);
 	con_stim_e->set_beta(beta);
 	con_stim_e->delta = raw_delta*eta;
 	con_stim_e->set_min_weight(wmin);
@@ -705,19 +704,20 @@ int main(int ac, char* av[])
 	if (!stimfile.empty()) {
 		logger->msg("Setting up stimulus ...",PROGRESS,true);
 		stimgroup->load_patterns(stimfile.c_str());
-		stimgroup->set_next_action_time(50); // let network settle for some time
+		stimgroup->set_next_action_time(10); // let network settle for some time
 
-		sprintf(strbuf, "%s/%s.%d.s.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
-		SpikeMonitor * smon_s = new SpikeMonitor( stimgroup, string(strbuf), size );
+		sprintf(strbuf, "%s/%s.%d.s.spk", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+		BinarySpikeMonitor * smon_s = new BinarySpikeMonitor( stimgroup, string(strbuf), size );
 
+		// gives the first 3 patterns half of the probability
 		if ( preferred > 0 ) { 
 			std::vector<double> dist = stimgroup->get_distribution();
 			int r = preferred;
 			for ( int i = 0 ; i < dist.size() ; ++i ) {
 				if ( i == r ) 
-					dist[i] = 3.0;
-				else
 					dist[i] = 1.0;
+				else
+					dist[i] = 1.0/dist.size();
 			}
 			stimgroup->set_distribution(dist);
 		}
@@ -781,10 +781,7 @@ int main(int ac, char* av[])
 		wmon->load_pattern_connections(monfile,10,10,ASSEMBLIES_ONLY); // true for assemblies only
 
 	sprintf(strbuf, "%s/%s.%d.hom", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
-	StateMonitor * stmon_hom = new StateMonitor( neurons_e, 5, "P11hom_vector", string(strbuf), 1 ); 
-
-	sprintf(strbuf, "%s/%s.%d.hom2", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
-	StateMonitor * stmon_hom2 = new StateMonitor( neurons_e, 6, "P11hom_vector", string(strbuf), 1 ); 
+	StateMonitor * stmon_hom = new StateMonitor( con_ee->hom, 12, string(strbuf), 1 ); 
 
 	sprintf(strbuf, "%s/%s.%d.mem", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	VoltageMonitor * stmon_mem = new VoltageMonitor( neurons_e, 3, string(strbuf) ); 
@@ -835,12 +832,12 @@ int main(int ac, char* av[])
 	// sprintf(strbuf, "%s/%s.%d.wpe", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	// new WeightStatsMonitor( con_se, string(strbuf) );
 
-	sprintf(strbuf, "%s/%s.%d.e.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
-	SpikeMonitor * smon_e = new SpikeMonitor( neurons_e, string(strbuf), size );
+	sprintf(strbuf, "%s/%s.%d.e.spk", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	BinarySpikeMonitor * smon_e = new BinarySpikeMonitor( neurons_e, string(strbuf), size );
 
 
-	sprintf(strbuf, "%s/%s.%d.i2.ras", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
-	SpikeMonitor * smon_i2 = new SpikeMonitor( neurons_i2, string(strbuf), size );
+	sprintf(strbuf, "%s/%s.%d.i2.spk", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	BinarySpikeMonitor * smon_i2 = new BinarySpikeMonitor( neurons_i2, string(strbuf), size );
 
 	sprintf(strbuf, "%s/%s.%d.e.prate", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 	PopulationRateMonitor * pmon_e = new PopulationRateMonitor( neurons_e, string(strbuf), 0.1 );
@@ -854,22 +851,18 @@ int main(int ac, char* av[])
 
 	// prime
 	if ( prime ) {
-		// neurons_e->set_eta(1e-2); // exc scaling
-		con_ee->stdp_active = false;
-		con_stim_e->stdp_active = false;
+		// tries to decrease training time by initially rapidly decorrelating patterns
+		// Note, that this was not done in the original publication
+		logger->msg("High intensity priming ...",PROGRESS,true);
+		stimgroup->set_mean_on_period(1.0);
+		stimgroup->set_mean_off_period(0.2);
 
-		if (!sys->run(100.0,false))
+		if (!sys->run(200.0,false))
 			errcode = 1;
-
-		// con_stim_e->stdp_active = true;
-		// con_ee->stdp_active = true;
-
-		// neurons_e->set_eta(eta); // exc scaling
 	}
-	// neurons_e->set_eta(0); 
-	
 
-	// con_ee->set_block(0,100,0,100,2.0);
+	stimgroup->set_mean_on_period(ontime);
+	stimgroup->set_mean_off_period(offtime);
 
 	if ( eta > 0 ) {
 		con_ee->stdp_active = true;
@@ -884,19 +877,28 @@ int main(int ac, char* av[])
 	con_i2e->stdp_active = isp_active;
 
 
+	logger->msg("Main simtime ...",PROGRESS,true);
 	if (!sys->run(simtime,false)) 
 			errcode = 1;
 
+	logger->msg("Saving ...",PROGRESS,true);
 	if ( save ) {
-		sprintf(strbuf, "%s/%s", dir.c_str(), file_prefix.c_str() );
-		sys->save_network_state(string(strbuf));
+		sys->set_output_dir(dir);
+		sys->save_network_state(file_prefix);
 	}
 
+	logger->msg("Writing connectivity matrices ...",PROGRESS,true);
+	sprintf(strbuf, "%s/%s.%d.ee.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	con_ee->write_to_file(strbuf);
 
-	if (errcode)
-		mpienv->abort(errcode);
+	sprintf(strbuf, "%s/%s.%d.ext.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+	con_stim_e->write_to_file(strbuf);
+
+	if (errcode) auryn_abort(errcode);
+
 	logger->msg("Freeing ...",PROGRESS,true);
 	auryn_free();
+
 	return errcode;
 
 }

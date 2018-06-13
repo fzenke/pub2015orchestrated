@@ -12,7 +12,7 @@ make -C $DIR -j8 $BIN && mpirun -n $NP $DIR/$BIN \
 	--simtime $SIMTIME --tauf $TAUF --taud $TAUD \
 	--intsparse $INTSPARSENESS \
 	--extsparse 0.10 \
-	--off 10.0 --on 0.2 \
+	--off 5.0 --on 0.2 \
 	--beta $BETA --eta $ETA --bgrate $BGRATE --scale 50 --weight_a $WEIGHTA --alpha $ALPHA --delta 0.02
 
 

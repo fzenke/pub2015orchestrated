@@ -50,11 +50,11 @@ int main(int ac, char* av[])
 	bool noisy_initial_weights = false;
 	bool consolidate_initial_weights = false;
 
-	NeuronID stimsize = 1000;
-	NeuronID size = 4000;
+	NeuronID stimsize = 4096;
+	NeuronID size = 4096;
 	NeuronID seed = 1;
 	double alpha = 3;
-	double kappa = 3;
+	double kappa = 10;
 	double tauf = 200e-3;
 	double ujump = 0.2;
 	double taud = 200e-3;
@@ -355,6 +355,7 @@ int main(int ac, char* av[])
 
 	auryn_init( ac, av, dir, "sim_rc_p10c", file_prefix );
 	sys->set_master_seed(42);
+	logger->set_logfile_loglevel(VERBOSE);
 	
 	//log params
 	logger->parameter("alpha",alpha);
@@ -466,7 +467,7 @@ int main(int ac, char* av[])
 	con_ei2->set_tau_d(taud);
 	con_ei2->set_tau_f(0.6);
 	con_ei2->set_ujump(0.2);
-	con_ei2->set_urest(0.2);
+	// con_ei2->set_urest(0.2);
 
 	// P10Connection * con_ei2 = NULL;
 	// con_ei2 = new P10Connection( neurons_e, neurons_i2,
@@ -542,7 +543,7 @@ int main(int ac, char* av[])
 		con_stim_i->set_tau_d(taud);
 		con_stim_i->set_tau_f(0.6);
 		con_stim_i->set_ujump(0.2);
-		con_stim_i->set_urest(0.2);
+		// con_stim_i->set_urest(0.2);
 	}
 
 	// External input
@@ -605,7 +606,7 @@ int main(int ac, char* av[])
 	if (!stimfile.empty()) {
 		logger->msg("Setting up stimulus ...",PROGRESS,true);
 		stimgroup->load_patterns(stimfile.c_str());
-		stimgroup->set_next_action_time(50); // let network settle for some time
+		stimgroup->set_next_action_time(1); // let network settle for some time
 
 		sprintf(strbuf, "%s/%s.%d.s.spk", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
 		BinarySpikeMonitor * smon_s = new BinarySpikeMonitor( stimgroup, string(strbuf), size );
@@ -614,7 +615,6 @@ int main(int ac, char* av[])
 		if ( preferred > 0 ) { 
 			std::vector<double> dist = stimgroup->get_distribution();
 			int r = preferred;
-			double prob = 0.8;
 			for ( int i = 0 ; i < dist.size() ; ++i ) {
 				if ( i == r ) 
 					dist[i] = 1.0;
@@ -731,6 +731,10 @@ int main(int ac, char* av[])
 	if (!infilename.empty()) {
 		logger->msg("Loading from file ...",PROGRESS,true);
 		sys->load_network_state(infilename.c_str());
+
+		// TODO remove debug
+		sprintf(strbuf, "%s/%s.%d.ee.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
+		con_ee->write_to_file(strbuf);
 		// auryn_vector_float * foo = neurons_i2->get_state_vector("g_nmda");
 		// auryn_vector_float_set_all( foo, 5.0 );
 	}
@@ -759,19 +763,18 @@ int main(int ac, char* av[])
 
 	// prime
 	if ( prime ) {
-		// neurons_e->set_eta(1e-2); // exc scaling
-		con_ee->stdp_active = false;
-		con_stim_e->stdp_active = false;
+		// tries to decrease training time by initially rapidly decorrelating patterns
+		// Note, that this was not done in the original publication
+		logger->msg("High intensity priming ...",PROGRESS,true);
+		stimgroup->set_mean_on_period(1.0);
+		stimgroup->set_mean_off_period(0.2);
 
-		if (!sys->run(100.0,false))
+		if (!sys->run(200.0,false))
 			errcode = 1;
-
-		// con_stim_e->stdp_active = true;
-		// con_ee->stdp_active = true;
-
-		// neurons_e->set_eta(eta); // exc scaling
 	}
-	// neurons_e->set_eta(0); 
+
+	stimgroup->set_mean_on_period(ontime);
+	stimgroup->set_mean_off_period(offtime);
 
 	if ( eta > 0 ) {
 		con_ee->stdp_active = true;
@@ -786,6 +789,7 @@ int main(int ac, char* av[])
 	con_i2e->stdp_active = isp_active;
 
 
+	logger->msg("Main simtime ...",PROGRESS,true);
 	if (!sys->run(simtime,false)) 
 			errcode = 1;
 
@@ -807,5 +811,6 @@ int main(int ac, char* av[])
 	auryn_free();
 
 	return errcode;
+
 }
 

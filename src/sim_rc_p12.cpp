@@ -541,7 +541,7 @@ int main(int ac, char* av[])
 	con_ee->set_tau_d(taud);
 	con_ee->set_tau_f(tauf);
 	con_ee->set_ujump(ujump);
-	con_ee->set_urest(ujump);
+	// con_ee->set_urest(ujump);
 	con_ee->set_beta(beta);
 	con_ee->delta = raw_delta*eta;
 	con_ee->set_min_weight(wmin);
@@ -561,7 +561,7 @@ int main(int ac, char* av[])
 	con_ei2->set_tau_d(taud);
 	con_ei2->set_tau_f(0.6);
 	con_ei2->set_ujump(0.2);
-	con_ei2->set_urest(0.2);
+	// con_ei2->set_urest(0.2);
 
 	// P12Connection * con_ei2 = NULL;
 	// con_ei2 = new P12Connection( neurons_e, neurons_i2,
@@ -641,7 +641,7 @@ int main(int ac, char* av[])
 		con_stim_i->set_tau_d(taud);
 		con_stim_i->set_tau_f(0.6);
 		con_stim_i->set_ujump(0.2);
-		con_stim_i->set_urest(0.2);
+		// con_stim_i->set_urest(0.2);
 	}
 
 	// External input
@@ -660,7 +660,7 @@ int main(int ac, char* av[])
 	con_stim_e->set_tau_d(taud);
 	con_stim_e->set_tau_f(tauf);
 	con_stim_e->set_ujump(ujump);
-	con_stim_e->set_urest(ujump);
+	// con_stim_e->set_urest(ujump);
 	con_stim_e->set_beta(beta);
 	con_stim_e->delta = raw_delta*eta;
 	con_stim_e->set_min_weight(wmin);

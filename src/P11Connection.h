@@ -47,7 +47,6 @@ private:
 	double Ujump;
 
 
-	auryn_vector_float * hom;
 
 	AurynFloat tau_plus;
 	AurynFloat tau_minus;
@@ -115,10 +114,12 @@ public:
 	AurynFloat A2_minus;
 	AurynFloat delta;
 	AurynFloat pot_strength;
+	AurynFloat target_rate;
 
 	Trace * tr_pre;
 	Trace * tr_post;
 	Trace * tr_post2;
+	Trace * hom;
 
 	inline AurynWeight dw_pre(const NeuronID post, const AurynWeight * w);
 	inline AurynWeight dw_post(const NeuronID pre, const NeuronID post, const AurynWeight * w, const AurynWeight w0);
