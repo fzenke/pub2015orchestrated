@@ -3,6 +3,9 @@
 OUTDIR="$HOME/data/sim"
 RECFILE="./data/rf_discsR8.mtx"
 
+# Create directory if it does not exist
+mkdir -p $OUTDIR
+
 DIR="."
 # BIN="sim_rc_p10c"
 BIN="sim_rc_p11"
