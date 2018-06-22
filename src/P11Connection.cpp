@@ -50,7 +50,7 @@ void P11Connection::init(AurynFloat eta, AurynFloat kappa, AurynFloat maxweight)
 	set_beta(1e-1);
 
 
-	tau_hom = 100.0 ;  // TODO set back to 1200 after tuning
+	tau_hom = 1200.0 ; 
 	target_rate = kappa;
 	hom = dst->get_post_trace(tau_hom);
 	hom->set_all(1.0*tau_hom);

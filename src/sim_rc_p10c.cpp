@@ -732,9 +732,6 @@ int main(int ac, char* av[])
 		logger->msg("Loading from file ...",PROGRESS,true);
 		sys->load_network_state(infilename.c_str());
 
-		// TODO remove debug
-		sprintf(strbuf, "%s/%s.%d.ee.wmat", dir.c_str(), file_prefix.c_str(), sys->mpi_rank() );
-		con_ee->write_to_file(strbuf);
 		// auryn_vector_float * foo = neurons_i2->get_state_vector("g_nmda");
 		// auryn_vector_float_set_all( foo, 5.0 );
 	}
